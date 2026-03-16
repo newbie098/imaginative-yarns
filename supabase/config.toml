@@ -1,0 +1,7 @@
+project_id = "dwtutsnmhueaabvorggy"
+
+[functions.generate-story]
+verify_jwt = false
+
+[functions.generate-story-images]
+verify_jwt = false
