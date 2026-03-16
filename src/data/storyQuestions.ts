@@ -188,7 +188,6 @@ export const storyQuestions: StoryQuestion[] = [
     options: [
       { id: "short", label: "Quick Tale (2–3 min)", emoji: "📗" },
       { id: "medium", label: "Adventure (3–5 min)", emoji: "📘" },
-      { id: "long", label: "Epic Journey (5–8 min)", emoji: "📕" },
     ],
   },
 ];
