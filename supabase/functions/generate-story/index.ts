@@ -26,29 +26,34 @@ Deno.serve(async (req) => {
     // Age-specific writing guidelines
     const ageGuidelines =
       childAge <= 4
-        ? `- Use VERY simple vocabulary — mostly 1-2 syllable words. Keep sentences short (5-8 words). Use lots of repetition and rhythm (e.g. "He walked and walked and walked").
-- Focus on concrete, familiar concepts: home, animals, food, colours, simple feelings.
-- Plot should be very simple: one clear problem, one clear solution, no subplots.
-- Use playful, sing-song language. Lots of sound effects (crash!, whoosh!, drip drop).`
+        ? `- Use ONLY the simplest everyday words a toddler already knows (e.g. big, small, happy, sad, run, eat, sleep). NO multi-syllable or unusual words.
+- Sentences must be very short — 5 to 8 words maximum. Use lots of repetition and rhythm (e.g. "He ran and ran and ran").
+- Focus only on concrete, familiar things: home, animals, food, colours, simple feelings.
+- One clear problem, one clear solution — no subplots, no twists.
+- Use playful, sing-song language and sound effects (crash!, whoosh!, drip drop). Avoid ALL descriptive adjective stacking.`
         : childAge <= 6
-        ? `- Use simple, clear vocabulary. Mix short and medium sentences. Occasional new words are fine if explained through context.
-- Familiar settings with imaginative twists. Simple cause-and-effect plot.
-- Characters can have 1-2 personality traits. Dialogue should be short and charming.`
-        : `- Use rich, varied vocabulary — early readers enjoy learning new words in context.
-- Sentences can vary in length and complexity. Use descriptive language generously.
-- Plot can include a small subplot or a twist. Characters may have nuanced motivations.
-- Can handle mild tension and more complex emotions (jealousy, bravery, loneliness resolved).`;
+        ? `- Use only simple, everyday words that a 5-6 year old already knows. AVOID unusual, literary, or multi-syllable adjectives entirely (e.g. do NOT use words like colossal, glinted, amiss, emboldened, parasols, unraveling, shimmering, luminous, peculiar, cascading).
+- Keep sentences short and clear — no more than 10-12 words. Split long sentences into two short ones.
+- Descriptions must be brief and concrete: say "a big blue button" not "a button the size of a dinner plate with a faint blue shimmer". One detail at a time.
+- Dialogue should be natural and simple — how a real young child would talk.
+- Simple cause-and-effect plot. No subplots. Characters have one clear personality trait.`
+        : `- Use clear, accessible vocabulary suitable for a 7-8 year old. You may occasionally use a more interesting word, but only when its meaning is immediately clear from context. Avoid literary or archaic words entirely.
+- Keep sentences varied but readable — mix short punchy sentences with simple compound ones. Avoid complex nested clauses.
+- Descriptions should be vivid but lean — one or two clear details per scene, not paragraph-long imagery.
+- Plot can include a light twist. Characters may show simple conflicting feelings (nervous but brave, sad but hopeful).
+- Dialogue should feel natural and age-appropriate — not overly formal or flowery.`;
 
     const systemPrompt = `You are a master children's storyteller. You create original, creative stories perfectly tailored for a ${childAge}-year-old child.
 
 CRITICAL GUIDELINES:
+- VOCABULARY IS THE MOST IMPORTANT RULE: Use only words that a ${childAge}-year-old already knows. If in doubt, use a simpler word. NEVER use literary, archaic, or unusual adjectives and verbs. This is a spoken story for a young child — every word must be immediately understood when heard out loud.
+- NEVER stack descriptions. One simple detail per thing is enough. Do NOT write sentences like "Amidst the colorful jumble of buttons, zippers, and stray threads, Lili noticed a glimmer beneath a blue button the size of a dinner plate." Instead write: "Lili saw something shiny under a big blue button."
 - NEVER preach or moralize. Do NOT have characters say things like "sharing is caring" or "we should always be kind."
 - Instead, SHOW good values (kindness, sharing, resolving conflict through dialogue, empathy, courage, honesty) through the ACTIONS and CHOICES of characters naturally within the plot. Let the parent and child discover the meaning together.
 - Use binary gender pronouns (she/he) for characters, not "they" as a singular pronoun.
-- Be genuinely creative — avoid formulaic "hero's journey" templates. Surprise the reader. Use unusual narrative structures, unexpected twists, playful humor, or poetic moments.
-- Draw inspiration from a wide range of storytelling traditions — fairy tales, fables, tall tales, trickster stories, nature myths. Feel free to invent your own folklore. Keep the world familiar and accessible to young children.
-- The story should feel alive, warm, and full of sensory detail — smells, textures, sounds, colors.
-- Characters should have distinct personalities and quirks. Dialogue should sound natural and charming.
+- Be genuinely creative — avoid formulaic "hero's journey" templates. Surprise the reader with simple, unexpected moments of fun, warmth, or silliness.
+- Draw inspiration from a wide range of storytelling traditions — fairy tales, fables, tall tales, trickster stories. Keep the world familiar and accessible to young children.
+- Characters should have one clear personality trait. Dialogue should sound like how a real child talks — short, natural, fun.
 - Conflict resolution should come through conversation, cleverness, empathy, or cooperation — never through violence.
 - The tone should match the mood the child selected (funny, magical, spooky, mystery).
 
