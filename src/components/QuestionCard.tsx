@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import type { StoryQuestion } from "@/data/storyQuestions";
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 
 interface QuestionCardProps {
   question: StoryQuestion;
@@ -74,6 +74,26 @@ const QuestionCard = ({
                 </button>
               );
             })}
+          </div>
+        )}
+
+        {question.type === "select" && question.options && (
+          <div className="relative">
+            <select
+              value={answer}
+              onChange={(e) => onAnswer(e.target.value)}
+              className="w-full rounded-xl border-2 border-border px-5 py-4 text-lg font-body bg-background text-foreground focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
+            >
+              <option value="">Choose an age…</option>
+              {question.options.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                  {opt.emoji} {opt.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <ChevronDown className="w-5 h-5 text-muted-foreground" />
+            </div>
           </div>
         )}
 

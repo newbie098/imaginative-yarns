@@ -1,17 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Mail, Lock, LogIn } from "lucide-react";
 
 const Login = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/");
+    }
+  }, [user, loading, navigate]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       if (isSignUp) {
@@ -25,13 +36,16 @@ const Login = () => {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        navigate("/");
       }
     } catch (err: any) {
       toast.error(err.message || "Authentication failed");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
+
+  if (loading) return null;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -71,11 +85,11 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitting}
             className="btn-primary w-full flex items-center justify-center gap-2"
           >
             <LogIn className="w-4 h-4" />
-            {loading ? "Please wait..." : isSignUp ? "Sign Up" : "Sign In"}
+            {submitting ? "Please wait..." : isSignUp ? "Sign Up" : "Sign In"}
           </button>
         </form>
 
@@ -88,6 +102,15 @@ const Login = () => {
             {isSignUp ? "Sign In" : "Sign Up"}
           </button>
         </p>
+
+        <div className="mt-6 pt-4 border-t border-border text-center">
+          <Link
+            to="/"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Continue without signing in
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,18 +1,34 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, RotateCcw, Loader2, Download, Zap } from "lucide-react";
+import { BookOpen, RotateCcw, Loader2, Download, Zap, Bookmark } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { toast } from "sonner";
+import { saveStory } from "@/lib/savedStories";
 
 interface StoryDisplayProps {
   story: string;
   onRestart: () => void;
   isStreaming?: boolean;
   fromCache?: boolean;
+  isLoggedIn?: boolean;
 }
 
-const StoryDisplay = ({ story, onRestart, isStreaming, fromCache }: StoryDisplayProps) => {
+const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: StoryDisplayProps) => {
   const [saving, setSaving] = useState(false);
+  const [savingStory, setSavingStory] = useState(false);
+  const [storySaved, setStorySaved] = useState(false);
+
+  const handleSaveStory = async () => {
+    setSavingStory(true);
+    const result = await saveStory(story);
+    if (result.ok) {
+      setStorySaved(true);
+      toast.success("Story saved! Find it in My Stories.");
+    } else {
+      toast.error("Failed to save story. Please try again.");
+    }
+    setSavingStory(false);
+  };
 
   const handleSavePdf = async () => {
     setSaving(true);
@@ -31,7 +47,6 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache }: StoryDisplay
         }
       };
 
-      // Render story text
       const lines = story.split("\n");
       for (const line of lines) {
         if (line.startsWith("# ")) {
@@ -57,7 +72,6 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache }: StoryDisplay
         } else if (line.trim() === "") {
           y += 4;
         } else {
-          // Handle bold markers by stripping them for PDF
           const clean = line.replace(/\*\*(.*?)\*\*/g, "$1");
           doc.setFont("helvetica", "normal");
           doc.setFontSize(11);
@@ -68,7 +82,6 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache }: StoryDisplay
         }
       }
 
-      // Extract title for filename
       const titleMatch = story.match(/^# (.+)/m);
       const filename = titleMatch
         ? titleMatch[1].replace(/[^a-zA-Z0-9 ]/g, "").trim().replace(/\s+/g, "-").toLowerCase()
@@ -105,7 +118,6 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache }: StoryDisplay
       }
       if (line.trim() === "") return <br key={i} />;
 
-      // Bold text
       const parts = line.split(/\*\*(.*?)\*\*/g);
       return (
         <p key={i} className="text-foreground/90 leading-relaxed text-lg mb-2">
@@ -156,11 +168,43 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache }: StoryDisplay
 
       {!isStreaming && (
         <div className="flex flex-col items-center gap-3 mt-8 pb-12">
-          <button onClick={handleSavePdf} disabled={saving} className="btn-primary inline-flex items-center gap-2">
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {saving ? "Saving…" : "Save as PDF"}
-          </button>
-          <button onClick={onRestart} className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors inline-flex items-center gap-2">
+          {isLoggedIn ? (
+            <>
+              <button
+                onClick={handleSaveStory}
+                disabled={savingStory || storySaved}
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                {savingStory ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Bookmark className="w-4 h-4" />
+                )}
+                {storySaved ? "Saved!" : savingStory ? "Saving…" : "Save Story"}
+              </button>
+              <button
+                onClick={handleSavePdf}
+                disabled={saving}
+                className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors inline-flex items-center gap-2"
+              >
+                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                {saving ? "Saving…" : "Save as PDF"}
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleSavePdf}
+              disabled={saving}
+              className="btn-primary inline-flex items-center gap-2"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {saving ? "Saving…" : "Save as PDF"}
+            </button>
+          )}
+          <button
+            onClick={onRestart}
+            className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors inline-flex items-center gap-2"
+          >
             <RotateCcw className="w-3.5 h-3.5" />
             Create Another Story
           </button>

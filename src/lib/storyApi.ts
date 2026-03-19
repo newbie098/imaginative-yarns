@@ -9,7 +9,8 @@ function resolveAnswers(answers: Record<string, string>): Record<string, string>
   for (const q of storyQuestions) {
     const raw = answers[q.id];
     if (!raw) continue;
-    if (q.type === "text") {
+    if (q.type === "text" || q.type === "select") {
+      // Pass raw value: age is already a number string ("3"–"8")
       resolved[q.id] = raw;
     } else {
       const opt = q.options?.find((o) => o.id === raw);

@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
 import StoryHeader from "@/components/StoryHeader";
 import WelcomeCard from "@/components/WelcomeCard";
 import QuestionCard from "@/components/QuestionCard";
@@ -12,13 +13,20 @@ import { toast } from "sonner";
 
 type Phase = "welcome" | "questions" | "generating" | "story";
 
-/** Shuffle middle questions (indices 2–7), keep hero (0–1) and ending/length (last 2) fixed */
+/**
+ * Question order:
+ * - Index 0: child_age (always first, never shuffled)
+ * - Indices 1–2: hero_type, hero_name (anchor start)
+ * - Indices 3–(n-3): middle questions (shuffled)
+ * - Last 2: ending, length (anchor end)
+ */
 function buildSessionQuestions() {
-  const anchor_start = storyQuestions.slice(0, 2); // hero_type, hero_name
-  const anchor_end = storyQuestions.slice(-2);       // ending, length
-  const middle = [...storyQuestions.slice(2, -2)];
+  const anchor_first = storyQuestions.slice(0, 1); // child_age
+  const anchor_start = storyQuestions.slice(1, 3); // hero_type, hero_name
+  const anchor_end = storyQuestions.slice(-2);      // ending, length
+  const middle = [...storyQuestions.slice(3, -2)];
 
-  // Fisher-Yates shuffle
+  // Fisher-Yates shuffle middle
   for (let i = middle.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [middle[i], middle[j]] = [middle[j], middle[i]];
@@ -26,8 +34,7 @@ function buildSessionQuestions() {
 
   const pastPicks = getPastPicks();
 
-  // Pre-select random options for each question
-  const questions = [...anchor_start, ...middle, ...anchor_end].map((q) => {
+  const questions = [...anchor_first, ...anchor_start, ...middle, ...anchor_end].map((q) => {
     if (q.type === "choice" && q.options) {
       const displayCount = q.id === "length" ? q.options.length : 4;
       return {
@@ -35,6 +42,7 @@ function buildSessionQuestions() {
         options: selectRandomOptions(q.options, displayCount, pastPicks[q.id] || []),
       };
     }
+    // "select" and "text" types pass through as-is
     return q;
   });
 
@@ -42,13 +50,12 @@ function buildSessionQuestions() {
 }
 
 const Index = () => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const [phase, setPhase] = useState<Phase>("welcome");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [story, setStory] = useState("");
   const [fromCache, setFromCache] = useState(false);
-  // Build shuffled questions with random option subsets once per session
   const [sessionQuestions] = useState(() => buildSessionQuestions());
 
   const pastPicks = useMemo(() => getPastPicks(), []);
@@ -129,7 +136,6 @@ const Index = () => {
     setAnswers({});
     setStory("");
     setFromCache(false);
-    // Force page reload to get fresh shuffled questions & options
     window.location.reload();
   }, []);
 
@@ -142,14 +148,32 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background px-4 pb-8">
-      <div className="flex justify-end pt-4 pr-2">
-        <button
-          onClick={signOut}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
-        >
-          Sign out
-        </button>
+      <div className="flex items-center justify-end gap-4 pt-4 pr-2">
+        {user ? (
+          <>
+            <Link
+              to="/saved-stories"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+            >
+              My Stories
+            </Link>
+            <button
+              onClick={signOut}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+            >
+              Sign out
+            </button>
+          </>
+        ) : (
+          <Link
+            to="/login"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+          >
+            Sign in
+          </Link>
+        )}
       </div>
+
       <StoryHeader
         questionsLeft={
           phase === "questions"
@@ -159,7 +183,9 @@ const Index = () => {
       />
 
       <div className="mt-6">
-        {phase === "welcome" && <WelcomeCard onStart={handleStart} />}
+        {phase === "welcome" && (
+          <WelcomeCard onStart={handleStart} isLoggedIn={!!user} />
+        )}
 
         {phase === "questions" && (
           <QuestionCard
@@ -181,6 +207,7 @@ const Index = () => {
             onRestart={handleRestart}
             isStreaming={phase === "generating"}
             fromCache={fromCache}
+            isLoggedIn={!!user}
           />
         )}
       </div>

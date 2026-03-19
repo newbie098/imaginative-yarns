@@ -20,7 +20,26 @@ Deno.serve(async (req) => {
     };
     const storyLength = lengthMap[answers.length] || lengthMap.medium;
 
-    const systemPrompt = `You are a master children's storyteller. You create original, creative stories for children aged 5-8.
+    // Child age — default to 6 if not provided
+    const childAge = answers.child_age ? parseInt(answers.child_age, 10) : 6;
+
+    // Age-specific writing guidelines
+    const ageGuidelines =
+      childAge <= 4
+        ? `- Use VERY simple vocabulary — mostly 1-2 syllable words. Keep sentences short (5-8 words). Use lots of repetition and rhythm (e.g. "He walked and walked and walked").
+- Focus on concrete, familiar concepts: home, animals, food, colours, simple feelings.
+- Plot should be very simple: one clear problem, one clear solution, no subplots.
+- Use playful, sing-song language. Lots of sound effects (crash!, whoosh!, drip drop).`
+        : childAge <= 6
+        ? `- Use simple, clear vocabulary. Mix short and medium sentences. Occasional new words are fine if explained through context.
+- Familiar settings with imaginative twists. Simple cause-and-effect plot.
+- Characters can have 1-2 personality traits. Dialogue should be short and charming.`
+        : `- Use rich, varied vocabulary — early readers enjoy learning new words in context.
+- Sentences can vary in length and complexity. Use descriptive language generously.
+- Plot can include a small subplot or a twist. Characters may have nuanced motivations.
+- Can handle mild tension and more complex emotions (jealousy, bravery, loneliness resolved).`;
+
+    const systemPrompt = `You are a master children's storyteller. You create original, creative stories perfectly tailored for a ${childAge}-year-old child.
 
 CRITICAL GUIDELINES:
 - NEVER preach or moralize. Do NOT have characters say things like "sharing is caring" or "we should always be kind."
@@ -33,6 +52,9 @@ CRITICAL GUIDELINES:
 - Conflict resolution should come through conversation, cleverness, empathy, or cooperation — never through violence.
 - The tone should match the mood the child selected (funny, magical, spooky, mystery).
 
+AGE-SPECIFIC WRITING STYLE (child is ${childAge} years old):
+${ageGuidelines}
+
 OUTPUT FORMAT:
 - Write in Markdown.
 - Start with a title as # heading.
@@ -41,7 +63,7 @@ OUTPUT FORMAT:
 - End with "**The End** ✨"
 - End cleanly after "The End" marker.`;
 
-    const userPrompt = `Create a ${storyLength} children's story with these elements chosen by the child:
+    const userPrompt = `Create a ${storyLength} children's story for a ${childAge}-year-old with these elements chosen by the child:
 
 - Hero type: ${answers.hero_type}
 - Hero's name: ${answers.hero_name}
@@ -54,7 +76,7 @@ OUTPUT FORMAT:
 - Ending style: ${answers.ending}
 ${answers.wildcard ? `- Wild card (MUST include this): ${answers.wildcard}` : ""}
 
-Remember: Be creative, show values through action not words, and make it enchanting for a young listener.`;
+Remember: Be creative, show values through action not words, calibrate vocabulary and sentence complexity for a ${childAge}-year-old, and make it enchanting for a young listener.`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",

@@ -10,13 +10,28 @@ export interface StoryQuestion {
   category: string;
   title: string;
   prompt: string;
-  type: "choice" | "text";
+  type: "choice" | "text" | "select";
   options?: StoryOption[];
   placeholder?: string;
   optional?: boolean;
 }
 
 export const storyQuestions: StoryQuestion[] = [
+  {
+    id: "child_age",
+    category: "About You",
+    title: "How old are you?",
+    prompt: "This helps us write a story that's just right for you!",
+    type: "select",
+    options: [
+      { id: "3", label: "3 years old", emoji: "🌱" },
+      { id: "4", label: "4 years old", emoji: "🌟" },
+      { id: "5", label: "5 years old", emoji: "⭐" },
+      { id: "6", label: "6 years old", emoji: "🎯" },
+      { id: "7", label: "7 years old", emoji: "🚀" },
+      { id: "8", label: "8 years old", emoji: "🦸" },
+    ],
+  },
   {
     id: "hero_type",
     category: "Character",
