@@ -52,14 +52,6 @@ export const storyQuestions: StoryQuestion[] = [
     ],
   },
   {
-    id: "hero_name",
-    category: "Character",
-    title: "What's their name?",
-    prompt: "Give your hero a special name!",
-    type: "text",
-    placeholder: "Type a name…",
-  },
-  {
     id: "sidekick",
     category: "Friends",
     title: "Who comes along?",

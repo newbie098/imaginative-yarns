@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import type { StoryQuestion } from "@/data/storyQuestions";
 import { useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 interface QuestionCardProps {
   question: StoryQuestion;
@@ -53,27 +53,18 @@ const QuestionCard = ({
 
         {question.type === "choice" && question.options && (
           <div className="grid grid-cols-1 gap-3">
-            {question.options.map((opt) => {
-              const tried = pastPicks.includes(opt.id);
-              return (
-                <button
-                  key={opt.id}
-                  className={`option-button flex items-center gap-3 relative ${
-                    answer === opt.id ? "selected" : ""
-                  }`}
-                  onClick={() => onAnswer(opt.id)}
-                >
-                  <span className="text-2xl">{opt.emoji}</span>
-                  <span className="font-semibold text-foreground">{opt.label}</span>
-                  {tried && (
-                    <span className="ml-auto flex items-center gap-1 text-muted-foreground/60">
-                      <Check className="w-3.5 h-3.5" />
-                      <span className="text-[10px] font-medium tracking-wide">tried</span>
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {question.options.map((opt) => (
+              <button
+                key={opt.id}
+                className={`option-button flex items-center gap-3 relative ${
+                  answer === opt.id ? "selected" : ""
+                }`}
+                onClick={() => onAnswer(opt.id)}
+              >
+                <span className="text-2xl">{opt.emoji}</span>
+                <span className="font-semibold text-foreground">{opt.label}</span>
+              </button>
+            ))}
           </div>
         )}
 
