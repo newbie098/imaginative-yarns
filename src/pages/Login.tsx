@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Mail, Lock, LogIn } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 const Login = () => {
   const { user, loading } = useAuth();
@@ -13,7 +12,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const { t } = useTranslation();
 
   // Redirect to home if already logged in
   useEffect(() => {
@@ -34,14 +32,14 @@ const Login = () => {
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success(t("login.checkEmail"));
+        toast.success("Check your email to confirm your account!");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         navigate("/");
       }
     } catch (err: any) {
-      toast.error(err.message || t("login.authFailed"));
+      toast.error(err.message || "Authentication failed");
     } finally {
       setSubmitting(false);
     }
@@ -54,10 +52,10 @@ const Login = () => {
       <div className="story-card max-w-sm w-full">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-display font-bold italic text-foreground">
-            {t("app.title")}
+            Make Me A Story
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            {t("login.subtitle")}
+            Sign in to start creating magical stories
           </p>
         </div>
 
@@ -68,7 +66,7 @@ const Login = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("login.email")}
+              placeholder="Email"
               required
               className="w-full rounded-xl border-2 border-border pl-11 pr-5 py-3.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
             />
@@ -79,7 +77,7 @@ const Login = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={t("login.password")}
+              placeholder="Password"
               required
               minLength={6}
               className="w-full rounded-xl border-2 border-border pl-11 pr-5 py-3.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
@@ -91,17 +89,17 @@ const Login = () => {
             className="btn-primary w-full flex items-center justify-center gap-2"
           >
             <LogIn className="w-4 h-4" />
-            {submitting ? t("login.pleaseWait") : isSignUp ? t("login.signUp") : t("login.signIn")}
+            {submitting ? "Please wait..." : isSignUp ? "Sign Up" : "Sign In"}
           </button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground mt-4">
-          {isSignUp ? t("login.alreadyHaveAccount") : t("login.dontHaveAccount")}{" "}
+          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
           <button
             onClick={() => setIsSignUp(!isSignUp)}
             className="font-semibold text-foreground hover:underline"
           >
-            {isSignUp ? t("login.signIn") : t("login.signUp")}
+            {isSignUp ? "Sign In" : "Sign Up"}
           </button>
         </p>
 
@@ -110,7 +108,7 @@ const Login = () => {
             to="/"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            {t("login.continueWithout")}
+            Continue without signing in
           </Link>
         </div>
       </div>

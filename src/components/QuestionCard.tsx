@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { StoryQuestion } from "@/data/storyQuestions";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 interface QuestionCardProps {
   question: StoryQuestion;
@@ -28,7 +27,6 @@ const QuestionCard = ({
   pastPicks = [],
 }: QuestionCardProps) => {
   const [direction, setDirection] = useState(1);
-  const { t } = useTranslation(["common", "questions"]);
 
   return (
     <AnimatePresence mode="wait">
@@ -41,17 +39,17 @@ const QuestionCard = ({
         className="story-card max-w-md w-full mx-auto"
       >
         <div className="flex items-center gap-2">
-          <span className="category-label">{t(question.category, { ns: "questions" })}</span>
+          <span className="category-label">{question.category}</span>
           {question.optional && (
             <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted rounded-full px-2 py-0.5">
-              {t("question.optional")}
+              optional
             </span>
           )}
         </div>
         <h2 className="font-display text-2xl font-bold mt-2 mb-1 text-foreground">
-          {t(question.title, { ns: "questions" })}
+          {question.title}
         </h2>
-        <p className="text-muted-foreground text-sm mb-5">{t(question.prompt, { ns: "questions" })}</p>
+        <p className="text-muted-foreground text-sm mb-5">{question.prompt}</p>
 
         {question.type === "choice" && question.options && (
           <div className="grid grid-cols-1 gap-3">
@@ -64,7 +62,7 @@ const QuestionCard = ({
                 onClick={() => onAnswer(opt.id)}
               >
                 <span className="text-2xl">{opt.emoji}</span>
-                <span className="font-semibold text-foreground">{t(opt.label, { ns: "questions" })}</span>
+                <span className="font-semibold text-foreground">{opt.label}</span>
               </button>
             ))}
           </div>
@@ -77,10 +75,10 @@ const QuestionCard = ({
               onChange={(e) => onAnswer(e.target.value)}
               className="w-full rounded-xl border-2 border-border px-5 py-4 text-lg font-body bg-background text-foreground focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
             >
-              <option value="">{t("question.chooseAge")}</option>
+              <option value="">Choose an age…</option>
               {question.options.map((opt) => (
                 <option key={opt.id} value={opt.id}>
-                  {opt.emoji} {t(opt.label, { ns: "questions" })}
+                  {opt.emoji} {opt.label}
                 </option>
               ))}
             </select>
@@ -95,7 +93,7 @@ const QuestionCard = ({
             type="text"
             value={answer}
             onChange={(e) => onAnswer(e.target.value)}
-            placeholder={question.placeholder ? t(question.placeholder, { ns: "questions" }) : undefined}
+            placeholder={question.placeholder}
             className="w-full rounded-xl border-2 border-border px-5 py-4 text-lg font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
             autoFocus
             onKeyDown={(e) => {
@@ -113,7 +111,7 @@ const QuestionCard = ({
               }}
               className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors"
             >
-              {t("question.back")}
+              ← Back
             </button>
           ) : (
             <div />
@@ -128,7 +126,7 @@ const QuestionCard = ({
                 }}
                 className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors"
               >
-                {t("question.skip")}
+                Skip →
               </button>
             )}
             {canProceed && (
@@ -139,12 +137,12 @@ const QuestionCard = ({
                 }}
                 className="btn-primary"
               >
-                {t("question.next")}
+                Next →
               </button>
             )}
             {!canProceed && !onSkip && (
               <button disabled className="btn-primary opacity-50 cursor-not-allowed">
-                {t("question.pickOne")}
+                Pick one!
               </button>
             )}
           </div>

@@ -6,10 +6,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { getSavedStories, deleteSavedStory, type SavedStory } from "@/lib/savedStories";
 import StoryHeader from "@/components/StoryHeader";
 import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
 
 const formatDate = (iso: string) => {
-  return new Date(iso).toLocaleDateString("pt-BR", {
+  return new Date(iso).toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -23,7 +22,6 @@ const SavedStories = () => {
   const [loadingStories, setLoadingStories] = useState(true);
   const [openStory, setOpenStory] = useState<SavedStory | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -46,9 +44,9 @@ const SavedStories = () => {
     if (ok) {
       setStories((prev) => prev.filter((s) => s.id !== id));
       if (openStory?.id === id) setOpenStory(null);
-      toast.success(t("savedStories.deleted"));
+      toast.success("Story deleted.");
     } else {
-      toast.error(t("savedStories.deleteError"));
+      toast.error("Failed to delete story.");
     }
     setDeleting(null);
   };
@@ -97,7 +95,7 @@ const SavedStories = () => {
           to="/"
           className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium inline-flex items-center gap-1"
         >
-          <ArrowLeft className="w-3 h-3" /> {t("savedStories.backToStories")}
+          <ArrowLeft className="w-3 h-3" /> Back to stories
         </Link>
       </div>
 
@@ -106,7 +104,7 @@ const SavedStories = () => {
       <div className="max-w-lg mx-auto mt-6">
         <div className="flex items-center gap-2 mb-6">
           <BookMarked className="w-5 h-5 text-golden" />
-          <h2 className="font-display text-2xl font-bold text-foreground">{t("savedStories.title")}</h2>
+          <h2 className="font-display text-2xl font-bold text-foreground">My Stories</h2>
         </div>
 
         {loadingStories ? (
@@ -116,12 +114,12 @@ const SavedStories = () => {
         ) : stories.length === 0 ? (
           <div className="story-card text-center py-16">
             <BookOpen className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
-            <p className="font-display text-xl font-bold text-foreground mb-2">{t("savedStories.noStoriesYet")}</p>
+            <p className="font-display text-xl font-bold text-foreground mb-2">No stories yet</p>
             <p className="text-muted-foreground text-sm mb-6">
-              {t("savedStories.createFirst")}
+              Create your first story and save it here!
             </p>
             <Link to="/" className="btn-primary">
-              {t("savedStories.createStory")}
+              Create a Story
             </Link>
           </div>
         ) : openStory ? (
@@ -137,14 +135,14 @@ const SavedStories = () => {
                 onClick={() => setOpenStory(null)}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors font-semibold inline-flex items-center gap-1 mb-4"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> {t("savedStories.allStories")}
+                <ArrowLeft className="w-3.5 h-3.5" /> All stories
               </button>
               <div className="story-card">
                 {renderStoryText(openStory.story_text)}
               </div>
               <div className="flex items-center justify-between mt-4 px-1">
                 <span className="text-xs text-muted-foreground">
-                  {t("savedStories.savedDate", { date: formatDate(openStory.created_at) })}
+                  Saved {formatDate(openStory.created_at)}
                 </span>
                 <button
                   onClick={() => handleDelete(openStory.id)}
@@ -156,7 +154,7 @@ const SavedStories = () => {
                   ) : (
                     <Trash2 className="w-3.5 h-3.5" />
                   )}
-                  {t("savedStories.delete")}
+                  Delete
                 </button>
               </div>
             </motion.div>
@@ -188,7 +186,7 @@ const SavedStories = () => {
                     }}
                     disabled={deleting === story.id}
                     className="flex-shrink-0 text-muted-foreground hover:text-red-500 transition-colors p-1"
-                    aria-label={t("savedStories.deleteAriaLabel")}
+                    aria-label="Delete story"
                   >
                     {deleting === story.id ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

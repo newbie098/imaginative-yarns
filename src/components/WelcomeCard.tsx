@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { BookOpenText } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
 interface WelcomeCardProps {
   onStart: () => void;
@@ -9,8 +8,6 @@ interface WelcomeCardProps {
 }
 
 const WelcomeCard = ({ onStart, isLoggedIn }: WelcomeCardProps) => {
-  const { t } = useTranslation();
-
   if (isLoggedIn) {
     return (
       <motion.div
@@ -26,11 +23,9 @@ const WelcomeCard = ({ onStart, isLoggedIn }: WelcomeCardProps) => {
           </div>
         </div>
         <h2 className="font-display text-3xl font-bold text-foreground mb-3">
-          {t("welcome.heading").split("\n").map((line, i) => (
-            <span key={i}>{line}{i === 0 && <br />}</span>
-          ))}
+          Ready to create<br />a story?
         </h2>
-        <p className="category-label">{t("welcome.tapToBegin")}</p>
+        <p className="category-label">Tap to begin</p>
       </motion.div>
     );
   }
@@ -48,12 +43,10 @@ const WelcomeCard = ({ onStart, isLoggedIn }: WelcomeCardProps) => {
         </div>
       </div>
       <h2 className="font-display text-3xl font-bold text-foreground mb-3">
-        {t("welcome.heading").split("\n").map((line, i) => (
-          <span key={i}>{line}{i === 0 && <br />}</span>
-        ))}
+        Ready to create<br />a story?
       </h2>
       <p className="text-muted-foreground text-sm mb-8">
-        {t("welcome.tagline")}
+        Magical stories, crafted just for your child.
       </p>
 
       <div className="flex flex-col items-center gap-3">
@@ -61,15 +54,15 @@ const WelcomeCard = ({ onStart, isLoggedIn }: WelcomeCardProps) => {
           to="/login"
           className="btn-primary w-full max-w-xs text-center"
         >
-          {t("welcome.signInSignUp")}
+          Sign In / Sign Up
         </Link>
         <button
           onClick={onStart}
           className="text-sm font-semibold text-foreground/70 hover:text-foreground transition-colors"
         >
-          {t("welcome.continueWithout")}
+          Continue without signing in
         </button>
-        <p className="text-xs text-muted-foreground">{t("welcome.loginToSave")}</p>
+        <p className="text-xs text-muted-foreground">Log in to save your story</p>
       </div>
     </motion.div>
   );

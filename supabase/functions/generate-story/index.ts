@@ -9,11 +9,9 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const { answers, language } = await req.json();
+    const { answers } = await req.json();
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY is not configured");
-
-    const isPtBR = language === "pt-BR";
 
     const lengthMap: Record<string, string> = {
       short: "approximately 300-500 words (2-3 minute read-aloud)",
@@ -26,7 +24,7 @@ Deno.serve(async (req) => {
     const childAge = answers.child_age ? parseInt(answers.child_age, 10) : 6;
 
     // Age-specific writing guidelines
-    const ageGuidelinesEn =
+    const ageGuidelines =
       childAge <= 4
         ? `- Use ONLY the simplest everyday words a toddler already knows (e.g. big, small, happy, sad, run, eat, sleep). NO multi-syllable or unusual words.
 - Sentences must be very short — 5 to 8 words maximum. Use lots of repetition and rhythm (e.g. "He ran and ran and ran").
@@ -45,33 +43,8 @@ Deno.serve(async (req) => {
 - Plot can include a light twist. Characters may show simple conflicting feelings (nervous but brave, sad but hopeful).
 - Dialogue should feel natural and age-appropriate — not overly formal or flowery.`;
 
-    const ageGuidelinesPtBR =
-      childAge <= 4
-        ? `- Use APENAS as palavras mais simples que uma criança pequena já conhece (ex: grande, pequeno, feliz, triste, correr, comer, dormir). SEM palavras incomuns ou com muitas sílabas.
-- As frases devem ser muito curtas — no máximo 5 a 8 palavras. Use muita repetição e ritmo (ex: "Ele correu e correu e correu").
-- Foque apenas em coisas concretas e familiares: casa, animais, comida, cores, sentimentos simples.
-- Um problema claro, uma solução clara — sem subtramas, sem reviravoltas.
-- Use linguagem lúdica e sons (bum!, vrum!, plic plac). Evite acumular adjetivos descritivos.`
-        : childAge <= 6
-        ? `- Use apenas palavras simples do dia a dia que uma criança de 5-6 anos já conhece. EVITE adjetivos incomuns ou literários (ex: NÃO use palavras como colossal, reluzente, peculiar, esplêndido, onipotente, translúcido).
-- Mantenha as frases curtas e claras — no máximo 10-12 palavras. Divida frases longas em duas frases curtas.
-- As descrições devem ser breves e concretas: diga "um botão azul grande" e não "um botão do tamanho de um prato com um leve brilho azulado". Um detalhe de cada vez.
-- O diálogo deve ser natural e simples — como uma criança pequena de verdade falaria.
-- Enredo simples de causa e efeito. Sem subtramas. Os personagens têm uma característica de personalidade clara.`
-        : `- Use vocabulário claro e acessível para uma criança de 7-8 anos. Você pode usar ocasionalmente uma palavra mais interessante, mas apenas quando seu significado for imediatamente claro pelo contexto. Evite completamente palavras literárias ou arcaicas.
-- Mantenha as frases variadas mas legíveis — misture frases curtas e diretas com frases compostas simples. Evite orações subordinadas complexas.
-- As descrições devem ser vívidas mas enxutas — um ou dois detalhes claros por cena, não imagens longas.
-- O enredo pode ter uma reviravolta leve. Os personagens podem mostrar sentimentos simples conflitantes (nervoso mas corajoso, triste mas esperançoso).
-- O diálogo deve soar natural e adequado à idade — não muito formal ou floreado.`;
-
-    const ageGuidelines = isPtBR ? ageGuidelinesPtBR : ageGuidelinesEn;
-
-    const languageInstruction = isPtBR
-      ? `\nLANGUAGE: Write the entire story in Brazilian Portuguese (português do Brasil). Use natural, warm, child-friendly Brazilian Portuguese throughout — including dialogue, narration, and the title.\n`
-      : "";
-
     const systemPrompt = `You are a master children's storyteller. You create original, creative stories perfectly tailored for a ${childAge}-year-old child.
-${languageInstruction}
+
 CRITICAL GUIDELINES:
 - VOCABULARY IS THE MOST IMPORTANT RULE: Use only words that a ${childAge}-year-old already knows. If in doubt, use a simpler word. NEVER use literary, archaic, or unusual adjectives and verbs. This is a spoken story for a young child — every word must be immediately understood when heard out loud.
 - NEVER stack descriptions. One simple detail per thing is enough. Do NOT write sentences like "Amidst the colorful jumble of buttons, zippers, and stray threads, Lili noticed a glimmer beneath a blue button the size of a dinner plate." Instead write: "Lili saw something shiny under a big blue button."
