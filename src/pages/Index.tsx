@@ -10,6 +10,7 @@ import { getPastPicks, savePicks } from "@/lib/sessionMemory";
 import { getCachedStory, saveCachedStory } from "@/lib/storyCache";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 type Phase = "welcome" | "questions" | "generating" | "story";
 
@@ -51,6 +52,7 @@ function buildSessionQuestions() {
 
 const Index = () => {
   const { signOut, user } = useAuth();
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<Phase>("welcome");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -155,13 +157,13 @@ const Index = () => {
               to="/saved-stories"
               className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              My Stories
+              {t("nav.myStories")}
             </Link>
             <button
               onClick={signOut}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              Sign out
+              {t("nav.signOut")}
             </button>
           </>
         ) : (
@@ -169,7 +171,7 @@ const Index = () => {
             to="/login"
             className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
-            Sign in
+            {t("nav.signIn")}
           </Link>
         )}
       </div>

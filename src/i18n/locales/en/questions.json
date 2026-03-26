@@ -1,0 +1,139 @@
+{
+  "child_age": {
+    "category": "About You",
+    "title": "How old are you?",
+    "prompt": "This helps us write a story that's just right for you!",
+    "options": {
+      "3": "3 years old",
+      "4": "4 years old",
+      "5": "5 years old",
+      "6": "6 years old",
+      "7": "7 years old",
+      "8": "8 years old"
+    }
+  },
+  "hero_type": {
+    "category": "Character",
+    "title": "Who's the hero?",
+    "prompt": "Pick who goes on the adventure!",
+    "options": {
+      "kid": "A Kid Like Me",
+      "animal": "A Brave Animal",
+      "magical": "A Magical Being",
+      "robot": "A Friendly Robot",
+      "pirate": "A Daring Pirate",
+      "dragon": "A Baby Dragon",
+      "ghost": "A Friendly Ghost",
+      "astronaut": "A Young Astronaut",
+      "witch": "A Little Witch",
+      "detective": "A Kid Detective"
+    }
+  },
+  "sidekick": {
+    "category": "Friends",
+    "title": "Who comes along?",
+    "prompt": "Every hero needs a friend… or do they?",
+    "options": {
+      "best_friend": "A Best Friend",
+      "talking_animal": "A Talking Animal",
+      "fairy": "A Tiny Fairy",
+      "solo": "Solo Adventure!",
+      "toy": "A Toy Come Alive"
+    }
+  },
+  "setting": {
+    "category": "World",
+    "title": "Where does it happen?",
+    "prompt": "Pick the world for your story!",
+    "options": {
+      "forest": "Enchanted Forest",
+      "underwater": "Under the Sea",
+      "space": "Outer Space",
+      "neighborhood": "My Neighborhood",
+      "candy": "Candy Kingdom",
+      "volcano": "Inside a Volcano",
+      "castle": "A Floating Castle",
+      "cloud_city": "City in the Clouds"
+    }
+  },
+  "mood": {
+    "category": "Feeling",
+    "title": "What kind of story?",
+    "prompt": "How should the story make you feel?",
+    "options": {
+      "hilarious": "Super Funny!",
+      "magical": "Magical & Dreamy",
+      "spooky": "A Little Spooky",
+      "mystery": "A Mystery!",
+      "action": "Action-Packed!",
+      "silly": "Totally Silly"
+    }
+  },
+  "problem": {
+    "category": "Adventure",
+    "title": "What's the big problem?",
+    "prompt": "Every great story needs a challenge!",
+    "options": {
+      "lost": "Something Is Lost",
+      "help": "Someone Needs Help",
+      "riddle": "A Tricky Riddle",
+      "race": "A Big Race!",
+      "shrunk": "Everyone Shrunk!",
+      "curse": "A Silly Curse"
+    }
+  },
+  "power": {
+    "category": "Magic",
+    "title": "Pick a superpower!",
+    "prompt": "Your hero gets one special ability!",
+    "options": {
+      "wand": "Magic Wand",
+      "invisible": "Invisibility",
+      "animals": "Talk to Animals",
+      "speed": "Super Speed",
+      "flying": "Can Fly!",
+      "freeze": "Freeze Everyone and Everything",
+      "grow": "Grow Super Big",
+      "music": "Magic Music"
+    }
+  },
+  "object": {
+    "category": "Treasure",
+    "title": "Pick a magical object!",
+    "prompt": "This special thing helps in the story!",
+    "options": {
+      "map": "Treasure Map",
+      "stone": "Glowing Stone",
+      "book": "Enchanted Book",
+      "key": "Magic Key",
+      "mirror": "Magic Mirror",
+      "feather": "Golden Feather",
+      "potion": "Mystery Potion"
+    }
+  },
+  "wildcard": {
+    "category": "What If?",
+    "title": "Add something wild!",
+    "prompt": "What's one silly, weird, or surprising thing that MUST happen in your story?",
+    "placeholder": "e.g. A dancing pineapple shows up…"
+  },
+  "ending": {
+    "category": "Ending",
+    "title": "How does it end?",
+    "prompt": "Pick how the story wraps up!",
+    "options": {
+      "twist": "Big Surprise!",
+      "happy": "Happy Ever After",
+      "lesson": "A Lesson Learned"
+    }
+  },
+  "length": {
+    "category": "Length",
+    "title": "How long should it be?",
+    "prompt": "Pick the perfect story size!",
+    "options": {
+      "short": "Quick Tale (2–3 min)",
+      "medium": "Adventure (3–5 min)"
+    }
+  }
+}
