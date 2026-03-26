@@ -6,7 +6,7 @@ import enQuestions from "./locales/en/questions.json";
 import ptBRCommon from "./locales/pt-BR/common.json";
 import ptBRQuestions from "./locales/pt-BR/questions.json";
 
-const locale = import.meta.env.VITE_LOCALE || "pt-BR";
+const locale = import.meta.env.VITE_LOCALE || "en";
 
 i18next.use(initReactI18next).init({
   lng: locale,

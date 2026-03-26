@@ -7,14 +7,7 @@ import { getSavedStories, deleteSavedStory, type SavedStory } from "@/lib/savedS
 import StoryHeader from "@/components/StoryHeader";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-
-const formatDate = (iso: string) => {
-  return new Date(iso).toLocaleDateString("pt-BR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
+import { useLocale } from "@/contexts/LocaleContext";
 
 const SavedStories = () => {
   const { user, loading } = useAuth();
@@ -24,10 +17,18 @@ const SavedStories = () => {
   const [openStory, setOpenStory] = useState<SavedStory | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const { t } = useTranslation();
+  const { locale, localePath } = useLocale();
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(locale, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/login");
+      navigate(localePath("/login"));
     }
   }, [user, loading, navigate]);
 
@@ -94,7 +95,7 @@ const SavedStories = () => {
     <div className="min-h-screen bg-background px-4 pb-8">
       <div className="flex items-center justify-between pt-4 pr-2 pl-2">
         <Link
-          to="/"
+          to={localePath("/")}
           className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium inline-flex items-center gap-1"
         >
           <ArrowLeft className="w-3 h-3" /> {t("savedStories.backToStories")}
@@ -120,7 +121,7 @@ const SavedStories = () => {
             <p className="text-muted-foreground text-sm mb-6">
               {t("savedStories.createFirst")}
             </p>
-            <Link to="/" className="btn-primary">
+            <Link to={localePath("/")} className="btn-primary">
               {t("savedStories.createStory")}
             </Link>
           </div>

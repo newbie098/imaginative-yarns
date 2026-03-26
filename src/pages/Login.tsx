@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Mail, Lock, LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const Login = () => {
   const { user, loading } = useAuth();
@@ -14,11 +15,12 @@ const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { t } = useTranslation();
+  const { localePath } = useLocale();
 
   // Redirect to home if already logged in
   useEffect(() => {
     if (!loading && user) {
-      navigate("/");
+      navigate(localePath("/"));
     }
   }, [user, loading, navigate]);
 
@@ -38,7 +40,7 @@ const Login = () => {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate("/");
+        navigate(localePath("/"));
       }
     } catch (err: any) {
       toast.error(err.message || t("login.authFailed"));
@@ -107,7 +109,7 @@ const Login = () => {
 
         <div className="mt-6 pt-4 border-t border-border text-center">
           <Link
-            to="/"
+            to={localePath("/")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {t("login.continueWithout")}

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import LocaleLayout from "./components/LocaleLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SavedStories from "./pages/SavedStories";
@@ -19,9 +20,20 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/saved-stories" element={<SavedStories />} />
+            {/* English routes (default) */}
+            <Route element={<LocaleLayout locale="en" prefix="" />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/saved-stories" element={<SavedStories />} />
+            </Route>
+
+            {/* Brazilian Portuguese routes */}
+            <Route path="/pt-br" element={<LocaleLayout locale="pt-BR" prefix="/pt-br" />}>
+              <Route index element={<Index />} />
+              <Route path="login" element={<Login />} />
+              <Route path="saved-stories" element={<SavedStories />} />
+            </Route>
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

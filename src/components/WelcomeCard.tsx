@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { BookOpenText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface WelcomeCardProps {
   onStart: () => void;
@@ -10,6 +11,7 @@ interface WelcomeCardProps {
 
 const WelcomeCard = ({ onStart, isLoggedIn }: WelcomeCardProps) => {
   const { t } = useTranslation();
+  const { localePath } = useLocale();
 
   if (isLoggedIn) {
     return (
@@ -58,7 +60,7 @@ const WelcomeCard = ({ onStart, isLoggedIn }: WelcomeCardProps) => {
 
       <div className="flex flex-col items-center gap-3">
         <Link
-          to="/login"
+          to={localePath("/login")}
           className="btn-primary w-full max-w-xs text-center"
         >
           {t("welcome.signInSignUp")}
