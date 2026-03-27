@@ -1,0 +1,139 @@
+{
+  "child_age": {
+    "category": "Sobre Você",
+    "title": "Quantos anos você tem?",
+    "prompt": "Isso nos ajuda a escrever uma história perfeita para você!",
+    "options": {
+      "3": "3 anos",
+      "4": "4 anos",
+      "5": "5 anos",
+      "6": "6 anos",
+      "7": "7 anos",
+      "8": "8 anos"
+    }
+  },
+  "hero_type": {
+    "category": "Personagem",
+    "title": "Quem é o herói?",
+    "prompt": "Escolha quem vai na aventura!",
+    "options": {
+      "kid": "Uma Criança Como Eu",
+      "animal": "Um Animal Corajoso",
+      "magical": "Um Ser Mágico",
+      "robot": "Um Robô Amigo",
+      "pirate": "Um Pirata Ousado",
+      "dragon": "Um Dragãozinho",
+      "ghost": "Um Fantasminha",
+      "astronaut": "Um Jovem Astronauta",
+      "witch": "Uma Bruxinha",
+      "detective": "Uma Criança Detetive"
+    }
+  },
+  "sidekick": {
+    "category": "Amigos",
+    "title": "Quem vai junto?",
+    "prompt": "Todo herói precisa de um amigo… ou será que não?",
+    "options": {
+      "best_friend": "Um Melhor Amigo",
+      "talking_animal": "Um Animal Falante",
+      "fairy": "Uma Fadinha",
+      "solo": "Aventura Solo!",
+      "toy": "Um Brinquedo Vivo"
+    }
+  },
+  "setting": {
+    "category": "Mundo",
+    "title": "Onde acontece?",
+    "prompt": "Escolha o mundo da sua história!",
+    "options": {
+      "forest": "Floresta Encantada",
+      "underwater": "No Fundo do Mar",
+      "space": "Espaço Sideral",
+      "neighborhood": "Meu Bairro",
+      "candy": "Reino dos Doces",
+      "volcano": "Dentro de um Vulcão",
+      "castle": "Um Castelo Flutuante",
+      "cloud_city": "Cidade nas Nuvens"
+    }
+  },
+  "mood": {
+    "category": "Clima",
+    "title": "Que tipo de história?",
+    "prompt": "Como a história deve fazer você se sentir?",
+    "options": {
+      "hilarious": "Super Engraçada!",
+      "magical": "Mágica e Encantada",
+      "spooky": "Um Pouquinho Assustadora",
+      "mystery": "Um Mistério!",
+      "action": "Cheia de Ação!",
+      "silly": "Totalmente Boba"
+    }
+  },
+  "problem": {
+    "category": "Aventura",
+    "title": "Qual é o grande problema?",
+    "prompt": "Toda boa história precisa de um desafio!",
+    "options": {
+      "lost": "Algo Está Perdido",
+      "help": "Alguém Precisa de Ajuda",
+      "riddle": "Um Enigma Difícil",
+      "race": "Uma Grande Corrida!",
+      "shrunk": "Todo Mundo Encolheu!",
+      "curse": "Uma Maldição Boba"
+    }
+  },
+  "power": {
+    "category": "Magia",
+    "title": "Escolha um superpoder!",
+    "prompt": "Seu herói ganha uma habilidade especial!",
+    "options": {
+      "wand": "Varinha Mágica",
+      "invisible": "Invisibilidade",
+      "animals": "Falar com Animais",
+      "speed": "Super Velocidade",
+      "flying": "Pode Voar!",
+      "freeze": "Congelar Tudo e Todos",
+      "grow": "Crescer Muito Grande",
+      "music": "Música Mágica"
+    }
+  },
+  "object": {
+    "category": "Tesouro",
+    "title": "Escolha um objeto mágico!",
+    "prompt": "Essa coisa especial ajuda na história!",
+    "options": {
+      "map": "Mapa do Tesouro",
+      "stone": "Pedra Brilhante",
+      "book": "Livro Encantado",
+      "key": "Chave Mágica",
+      "mirror": "Espelho Mágico",
+      "feather": "Pena Dourada",
+      "potion": "Poção Misteriosa"
+    }
+  },
+  "wildcard": {
+    "category": "E Se…?",
+    "title": "Adicione algo maluco!",
+    "prompt": "Qual é uma coisa boba, estranha ou surpreendente que DEVE acontecer na sua história?",
+    "placeholder": "Ex: Um abacaxi dançante aparece…"
+  },
+  "ending": {
+    "category": "Final",
+    "title": "Como termina?",
+    "prompt": "Escolha como a história acaba!",
+    "options": {
+      "twist": "Grande Surpresa!",
+      "happy": "Felizes Para Sempre",
+      "lesson": "Uma Lição Aprendida"
+    }
+  },
+  "length": {
+    "category": "Tamanho",
+    "title": "Qual o tamanho da história?",
+    "prompt": "Escolha o tamanho perfeito!",
+    "options": {
+      "short": "Continho Rápido (2–3 min)",
+      "medium": "Aventura Completa (3–5 min)"
+    }
+  }
+}
