@@ -1,0 +1,139 @@
+{
+  "child_age": {
+    "category": "Über dich",
+    "title": "Wie alt bist du?",
+    "prompt": "So schreiben wir eine Geschichte, die genau zu dir passt!",
+    "options": {
+      "3": "3 Jahre alt",
+      "4": "4 Jahre alt",
+      "5": "5 Jahre alt",
+      "6": "6 Jahre alt",
+      "7": "7 Jahre alt",
+      "8": "8 Jahre alt"
+    }
+  },
+  "hero_type": {
+    "category": "Figur",
+    "title": "Wer ist der Held?",
+    "prompt": "Wähle, wer das Abenteuer erlebt!",
+    "options": {
+      "kid": "Ein Kind wie ich",
+      "animal": "Ein tapferes Tier",
+      "magical": "Ein magisches Wesen",
+      "robot": "Ein freundlicher Roboter",
+      "pirate": "Ein kühner Pirat",
+      "dragon": "Ein kleiner Drache",
+      "ghost": "Ein freundliches Gespenst",
+      "astronaut": "Ein junger Astronaut",
+      "witch": "Eine kleine Hexe",
+      "detective": "Ein Kinder-Detektiv"
+    }
+  },
+  "sidekick": {
+    "category": "Freunde",
+    "title": "Wer kommt mit?",
+    "prompt": "Jeder Held braucht einen Freund… oder?",
+    "options": {
+      "best_friend": "Ein bester Freund",
+      "talking_animal": "Ein sprechendes Tier",
+      "fairy": "Eine kleine Fee",
+      "solo": "Solo-Abenteuer!",
+      "toy": "Ein lebendig gewordenes Spielzeug"
+    }
+  },
+  "setting": {
+    "category": "Welt",
+    "title": "Wo passiert es?",
+    "prompt": "Wähle die Welt für deine Geschichte!",
+    "options": {
+      "forest": "Verzauberter Wald",
+      "underwater": "Unter dem Meer",
+      "space": "Im Weltall",
+      "neighborhood": "Mein Zuhause",
+      "candy": "Süssigkeitenland",
+      "volcano": "In einem Vulkan",
+      "castle": "Ein fliegendes Schloss",
+      "cloud_city": "Stadt in den Wolken"
+    }
+  },
+  "mood": {
+    "category": "Stimmung",
+    "title": "Was für eine Geschichte?",
+    "prompt": "Wie soll die Geschichte klingen?",
+    "options": {
+      "hilarious": "Super witzig!",
+      "magical": "Magisch und verträumt",
+      "spooky": "Ein bisschen gruselig",
+      "mystery": "Ein Rätsel!",
+      "action": "Voller Abenteuer!",
+      "silly": "Total albern"
+    }
+  },
+  "problem": {
+    "category": "Abenteuer",
+    "title": "Was ist das grosse Problem?",
+    "prompt": "Jede gute Geschichte braucht eine Herausforderung!",
+    "options": {
+      "lost": "Etwas ist verloren",
+      "help": "Jemand braucht Hilfe",
+      "riddle": "Ein kniffliges Rätsel",
+      "race": "Ein grosses Rennen!",
+      "shrunk": "Alle sind geschrumpft!",
+      "curse": "Ein lustiger Fluch"
+    }
+  },
+  "power": {
+    "category": "Magie",
+    "title": "Wähle eine Superkraft!",
+    "prompt": "Dein Held bekommt eine besondere Fähigkeit!",
+    "options": {
+      "wand": "Zauberstab",
+      "invisible": "Unsichtbarkeit",
+      "animals": "Mit Tieren sprechen",
+      "speed": "Superschnelligkeit",
+      "flying": "Kann fliegen!",
+      "freeze": "Alles einfrieren",
+      "grow": "Riesengross werden",
+      "music": "Zaubermusik"
+    }
+  },
+  "object": {
+    "category": "Schatz",
+    "title": "Wähle ein magisches Objekt!",
+    "prompt": "Dieses besondere Ding hilft in der Geschichte!",
+    "options": {
+      "map": "Schatzkarte",
+      "stone": "Leuchtender Stein",
+      "book": "Verzaubertes Buch",
+      "key": "Zauberschlüssel",
+      "mirror": "Zauberspiegel",
+      "feather": "Goldene Feder",
+      "potion": "Geheimnistrank"
+    }
+  },
+  "wildcard": {
+    "category": "Was wenn…?",
+    "title": "Füge etwas Verrücktes hinzu!",
+    "prompt": "Was ist eine witzige, seltsame oder überraschende Sache, die in deiner Geschichte UNBEDINGT passieren muss?",
+    "placeholder": "z.B. Eine tanzende Ananas taucht auf…"
+  },
+  "ending": {
+    "category": "Ende",
+    "title": "Wie endet es?",
+    "prompt": "Wähle, wie die Geschichte aufhört!",
+    "options": {
+      "twist": "Grosse Überraschung!",
+      "happy": "Happy End",
+      "lesson": "Eine gelernte Lektion"
+    }
+  },
+  "length": {
+    "category": "Länge",
+    "title": "Wie lang soll sie sein?",
+    "prompt": "Wähle die perfekte Grösse!",
+    "options": {
+      "short": "Kurze Geschichte (2–3 Min.)",
+      "medium": "Grosses Abenteuer (3–5 Min.)"
+    }
+  }
+}

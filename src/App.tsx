@@ -34,6 +34,13 @@ const App = () => (
               <Route path="saved-stories" element={<SavedStories />} />
             </Route>
 
+            {/* Swiss German routes */}
+            <Route path="/de-ch" element={<LocaleLayout locale="de-CH" prefix="/de-ch" />}>
+              <Route index element={<Index />} />
+              <Route path="login" element={<Login />} />
+              <Route path="saved-stories" element={<SavedStories />} />
+            </Route>
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
