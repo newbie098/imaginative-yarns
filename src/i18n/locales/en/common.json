@@ -1,0 +1,69 @@
+{
+  "app": {
+    "title": "Make Me A Story"
+  },
+  "nav": {
+    "myStories": "My Stories",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "welcome": {
+    "heading": "Ready to create\na story?",
+    "tapToBegin": "Tap to begin",
+    "tagline": "Magical stories, crafted just for your child.",
+    "signInSignUp": "Sign In / Sign Up",
+    "continueWithout": "Continue without signing in",
+    "loginToSave": "Log in to save your story"
+  },
+  "question": {
+    "optional": "optional",
+    "chooseAge": "Choose an age…",
+    "back": "← Back",
+    "skip": "Skip →",
+    "next": "Next →",
+    "pickOne": "Pick one!",
+    "questionsLeft_one": "{{count}} question left",
+    "questionsLeft_other": "{{count}} questions left"
+  },
+  "story": {
+    "writing": "Writing your story…",
+    "yourStory": "Your Story",
+    "crafting": "Crafting something magical…",
+    "fromCache": "From cache",
+    "saveStory": "Save Story",
+    "saving": "Saving…",
+    "saved": "Saved!",
+    "saveAsPdf": "Save as PDF",
+    "createAnother": "Create Another Story",
+    "savedSuccess": "Story saved! Find it in My Stories.",
+    "saveError": "Failed to save story. Please try again.",
+    "pdfSuccess": "Story saved as PDF!",
+    "pdfError": "Failed to save PDF. Please try again."
+  },
+  "login": {
+    "subtitle": "Sign in to start creating magical stories",
+    "email": "Email",
+    "password": "Password",
+    "signUp": "Sign Up",
+    "signIn": "Sign In",
+    "pleaseWait": "Please wait...",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "continueWithout": "Continue without signing in",
+    "checkEmail": "Check your email to confirm your account!",
+    "authFailed": "Authentication failed"
+  },
+  "savedStories": {
+    "title": "My Stories",
+    "backToStories": "Back to stories",
+    "allStories": "All stories",
+    "noStoriesYet": "No stories yet",
+    "createFirst": "Create your first story and save it here!",
+    "createStory": "Create a Story",
+    "savedDate": "Saved {{date}}",
+    "delete": "Delete",
+    "deleted": "Story deleted.",
+    "deleteError": "Failed to delete story.",
+    "deleteAriaLabel": "Delete story"
+  }
+}
