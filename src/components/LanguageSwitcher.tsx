@@ -4,6 +4,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 const LANGUAGES = [
   { code: "en", label: "EN", prefix: "" },
   { code: "pt-BR", label: "PT", prefix: "/pt-br" },
+  { code: "de-CH", label: "DE", prefix: "/de-ch" },
 ];
 
 const LanguageSwitcher = () => {

@@ -1,0 +1,69 @@
+{
+  "app": {
+    "title": "Erzähl mir eine Geschichte"
+  },
+  "nav": {
+    "myStories": "Meine Geschichten",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden"
+  },
+  "welcome": {
+    "heading": "Bereit, eine Geschichte\nzu erfinden?",
+    "tapToBegin": "Tippe, um zu beginnen",
+    "tagline": "Magische Geschichten, speziell für dein Kind.",
+    "signInSignUp": "Anmelden / Registrieren",
+    "continueWithout": "Ohne Anmeldung fortfahren",
+    "loginToSave": "Melde dich an, um deine Geschichte zu speichern"
+  },
+  "question": {
+    "optional": "optional",
+    "chooseAge": "Wähle ein Alter…",
+    "back": "← Zurück",
+    "skip": "Überspringen →",
+    "next": "Weiter →",
+    "pickOne": "Wähle eine!",
+    "questionsLeft_one": "{{count}} Frage übrig",
+    "questionsLeft_other": "{{count}} Fragen übrig"
+  },
+  "story": {
+    "writing": "Deine Geschichte wird geschrieben…",
+    "yourStory": "Deine Geschichte",
+    "crafting": "Etwas Magisches entsteht…",
+    "fromCache": "Aus dem Cache",
+    "saveStory": "Geschichte speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Gespeichert!",
+    "saveAsPdf": "Als PDF speichern",
+    "createAnother": "Neue Geschichte erstellen",
+    "savedSuccess": "Geschichte gespeichert! Findest du unter Meine Geschichten.",
+    "saveError": "Fehler beim Speichern. Bitte versuche es erneut.",
+    "pdfSuccess": "Geschichte als PDF gespeichert!",
+    "pdfError": "Fehler beim Speichern als PDF. Bitte versuche es erneut."
+  },
+  "login": {
+    "subtitle": "Melde dich an und erstelle magische Geschichten",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "signUp": "Registrieren",
+    "signIn": "Anmelden",
+    "pleaseWait": "Bitte warten…",
+    "alreadyHaveAccount": "Bereits ein Konto?",
+    "dontHaveAccount": "Noch kein Konto?",
+    "continueWithout": "Ohne Anmeldung fortfahren",
+    "checkEmail": "Prüfe deine E-Mail, um dein Konto zu bestätigen!",
+    "authFailed": "Anmeldung fehlgeschlagen"
+  },
+  "savedStories": {
+    "title": "Meine Geschichten",
+    "backToStories": "Zurück zu den Geschichten",
+    "allStories": "Alle Geschichten",
+    "noStoriesYet": "Noch keine Geschichten",
+    "createFirst": "Erstelle deine erste Geschichte und speichere sie hier!",
+    "createStory": "Geschichte erstellen",
+    "savedDate": "Gespeichert am {{date}}",
+    "delete": "Löschen",
+    "deleted": "Geschichte gelöscht.",
+    "deleteError": "Fehler beim Löschen der Geschichte.",
+    "deleteAriaLabel": "Geschichte löschen"
+  }
+}
