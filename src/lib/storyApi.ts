@@ -1,10 +1,9 @@
 import { storyQuestions } from "@/data/storyQuestions";
-import i18next from "@/i18n";
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-story`;
 const IMAGES_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-story-images`;
 
-/** Resolve option IDs to translated human-readable labels */
+/** Resolve option IDs to human-readable labels */
 function resolveAnswers(answers: Record<string, string>): Record<string, string> {
   const resolved: Record<string, string> = {};
   for (const q of storyQuestions) {
@@ -15,9 +14,7 @@ function resolveAnswers(answers: Record<string, string>): Record<string, string>
       resolved[q.id] = raw;
     } else {
       const opt = q.options?.find((o) => o.id === raw);
-      resolved[q.id] = opt
-        ? i18next.t(opt.label, { ns: "questions" })
-        : raw;
+      resolved[q.id] = opt?.label || raw;
     }
   }
   return resolved;
@@ -62,7 +59,7 @@ export async function streamStory({
       "Content-Type": "application/json",
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
     },
-    body: JSON.stringify({ answers: resolved, language: i18next.language }),
+    body: JSON.stringify({ answers: resolved }),
   });
 
   if (!resp.ok) {

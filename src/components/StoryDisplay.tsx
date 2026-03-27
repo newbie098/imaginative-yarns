@@ -4,7 +4,6 @@ import { BookOpen, RotateCcw, Loader2, Download, Zap, Bookmark } from "lucide-re
 import { jsPDF } from "jspdf";
 import { toast } from "sonner";
 import { saveStory } from "@/lib/savedStories";
-import { useTranslation } from "react-i18next";
 
 interface StoryDisplayProps {
   story: string;
@@ -18,16 +17,15 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
   const [saving, setSaving] = useState(false);
   const [savingStory, setSavingStory] = useState(false);
   const [storySaved, setStorySaved] = useState(false);
-  const { t } = useTranslation();
 
   const handleSaveStory = async () => {
     setSavingStory(true);
     const result = await saveStory(story);
     if (result.ok) {
       setStorySaved(true);
-      toast.success(t("story.savedSuccess"));
+      toast.success("Story saved! Find it in My Stories.");
     } else {
-      toast.error(t("story.saveError"));
+      toast.error("Failed to save story. Please try again.");
     }
     setSavingStory(false);
   };
@@ -90,10 +88,10 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
         : "story";
 
       doc.save(`${filename}.pdf`);
-      toast.success(t("story.pdfSuccess"));
+      toast.success("Story saved as PDF!");
     } catch (e) {
       console.error("PDF error:", e);
-      toast.error(t("story.pdfError"));
+      toast.error("Failed to save PDF. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -147,14 +145,14 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
       <div className="flex items-center justify-center gap-2 mb-6">
         <BookOpen className="w-5 h-5 text-golden" />
         <span className="category-label">
-          {isStreaming ? t("story.writing") : t("story.yourStory")}
+          {isStreaming ? "Writing your story…" : "Your Story"}
         </span>
         {isStreaming && (
           <Loader2 className="w-4 h-4 text-golden animate-spin" />
         )}
         {!isStreaming && fromCache && (
           <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
-            <Zap className="w-3 h-3" /> {t("story.fromCache")}
+            <Zap className="w-3 h-3" /> From cache
           </span>
         )}
       </div>
@@ -163,7 +161,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
         {story ? renderStory(story) : (
           <div className="text-center py-12">
             <Loader2 className="w-8 h-8 text-golden animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">{t("story.crafting")}</p>
+            <p className="text-muted-foreground">Crafting something magical…</p>
           </div>
         )}
       </div>
@@ -182,7 +180,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
                 ) : (
                   <Bookmark className="w-4 h-4" />
                 )}
-                {storySaved ? t("story.saved") : savingStory ? t("story.saving") : t("story.saveStory")}
+                {storySaved ? "Saved!" : savingStory ? "Saving…" : "Save Story"}
               </button>
               <button
                 onClick={handleSavePdf}
@@ -190,7 +188,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
                 className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors inline-flex items-center gap-2"
               >
                 {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                {saving ? t("story.saving") : t("story.saveAsPdf")}
+                {saving ? "Saving…" : "Save as PDF"}
               </button>
             </>
           ) : (
@@ -200,7 +198,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
               className="btn-primary inline-flex items-center gap-2"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              {saving ? t("story.saving") : t("story.saveAsPdf")}
+              {saving ? "Saving…" : "Save as PDF"}
             </button>
           )}
           <button
@@ -208,7 +206,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
             className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors inline-flex items-center gap-2"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            {t("story.createAnother")}
+            Create Another Story
           </button>
         </div>
       )}
