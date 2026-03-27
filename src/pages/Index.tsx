@@ -9,7 +9,10 @@ import { streamStory } from "@/lib/storyApi";
 import { getPastPicks, savePicks } from "@/lib/sessionMemory";
 import { getCachedStory, saveCachedStory } from "@/lib/storyCache";
 import { useAuth } from "@/hooks/useAuth";
+import { useLocale } from "@/contexts/LocaleContext";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type Phase = "welcome" | "questions" | "generating" | "story";
 
@@ -51,6 +54,8 @@ function buildSessionQuestions() {
 
 const Index = () => {
   const { signOut, user } = useAuth();
+  const { t } = useTranslation();
+  const { localePath } = useLocale();
   const [phase, setPhase] = useState<Phase>("welcome");
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -149,27 +154,28 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background px-4 pb-8">
       <div className="flex items-center justify-end gap-4 pt-4 pr-2">
+        <LanguageSwitcher />
         {user ? (
           <>
             <Link
-              to="/saved-stories"
+              to={localePath("/saved-stories")}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              My Stories
+              {t("nav.myStories")}
             </Link>
             <button
               onClick={signOut}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              Sign out
+              {t("nav.signOut")}
             </button>
           </>
         ) : (
           <Link
-            to="/login"
+            to={localePath("/login")}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
-            Sign in
+            {t("nav.signIn")}
           </Link>
         )}
       </div>
