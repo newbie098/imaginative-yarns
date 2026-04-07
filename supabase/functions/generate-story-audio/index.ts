@@ -84,6 +84,7 @@ Deno.serve(async (req) => {
         voice: "fable",
         input: cleanText,
         response_format: "mp3",
+        speed: 0.88,
       }),
     });
 
