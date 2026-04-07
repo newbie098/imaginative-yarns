@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.generate-story-images]
 verify_jwt = false
+
+[functions.generate-story-audio]
+verify_jwt = false

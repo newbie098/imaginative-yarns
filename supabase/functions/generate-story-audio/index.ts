@@ -1,3 +1,4 @@
+// verify_jwt = false (set in supabase/config.toml)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
