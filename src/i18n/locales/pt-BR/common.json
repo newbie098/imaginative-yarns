@@ -38,7 +38,13 @@
     "savedSuccess": "História salva! Encontre-a em Minhas Histórias.",
     "saveError": "Falha ao salvar a história. Por favor, tente novamente.",
     "pdfSuccess": "História salva como PDF!",
-    "pdfError": "Falha ao salvar o PDF. Por favor, tente novamente."
+    "pdfError": "Falha ao salvar o PDF. Por favor, tente novamente.",
+    "listen": "Ouvir",
+    "pauseAudio": "Pausar",
+    "playAudio": "Reproduzir",
+    "audioLoading": "Carregando áudio…",
+    "downloadAudio": "Baixar áudio",
+    "audioError": "Áudio indisponível. Por favor, tente novamente."
   },
   "login": {
     "subtitle": "Entre para começar a criar histórias mágicas",

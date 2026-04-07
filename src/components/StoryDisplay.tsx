@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, RotateCcw, Loader2, Download, Zap, Bookmark } from "lucide-react";
+import { BookOpen, RotateCcw, Loader2, Download, Zap, Bookmark, Headphones, Play, Pause, Square } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import i18next from "@/i18n";
 import { saveStory } from "@/lib/savedStories";
+import { generateStoryAudio } from "@/lib/storyAudio";
 
 interface StoryDisplayProps {
   story: string;
@@ -11,21 +14,110 @@ interface StoryDisplayProps {
   isStreaming?: boolean;
   fromCache?: boolean;
   isLoggedIn?: boolean;
+  /** Pre-loaded audio URL (e.g. from a saved story with audio already generated) */
+  audioUrl?: string;
+  /** Called after first-time audio generation so the parent can persist the URL */
+  onAudioGenerated?: (audioUrl: string) => void;
 }
 
-const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: StoryDisplayProps) => {
+type AudioState = "idle" | "loading" | "playing" | "paused" | "error";
+
+const StoryDisplay = ({
+  story,
+  onRestart,
+  isStreaming,
+  fromCache,
+  isLoggedIn,
+  audioUrl: initialAudioUrl,
+  onAudioGenerated,
+}: StoryDisplayProps) => {
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [savingStory, setSavingStory] = useState(false);
   const [storySaved, setStorySaved] = useState(false);
 
+  const [audioState, setAudioState] = useState<AudioState>(
+    initialAudioUrl ? "paused" : "idle"
+  );
+  const [resolvedAudioUrl, setResolvedAudioUrl] = useState<string | null>(
+    initialAudioUrl ?? null
+  );
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Sync if a pre-loaded URL arrives after mount (e.g. saved story prop update)
+  useEffect(() => {
+    if (initialAudioUrl && !resolvedAudioUrl) {
+      setResolvedAudioUrl(initialAudioUrl);
+      setAudioState("paused");
+    }
+  }, [initialAudioUrl, resolvedAudioUrl]);
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleListen = async () => {
+    // If audio already resolved, play it directly
+    if (resolvedAudioUrl) {
+      playAudio(resolvedAudioUrl);
+      return;
+    }
+
+    setAudioState("loading");
+    try {
+      const url = await generateStoryAudio(story, i18next.language);
+      setResolvedAudioUrl(url);
+      onAudioGenerated?.(url);
+      playAudio(url);
+    } catch (e) {
+      console.error("Audio generation error:", e);
+      toast.error(t("story.audioError"));
+      setAudioState("error");
+    }
+  };
+
+  const playAudio = (url: string) => {
+    if (!audioRef.current || audioRef.current.src !== url) {
+      if (audioRef.current) audioRef.current.pause();
+      const audio = new Audio(url);
+      audio.onended = () => setAudioState("paused");
+      audio.onerror = () => {
+        toast.error(t("story.audioError"));
+        setAudioState("error");
+      };
+      audioRef.current = audio;
+    }
+    audioRef.current.play();
+    setAudioState("playing");
+  };
+
+  const handlePause = () => {
+    audioRef.current?.pause();
+    setAudioState("paused");
+  };
+
+  const handleStop = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setAudioState("paused");
+  };
+
   const handleSaveStory = async () => {
     setSavingStory(true);
-    const result = await saveStory(story);
+    const result = await saveStory(story, resolvedAudioUrl);
     if (result.ok) {
       setStorySaved(true);
-      toast.success("Story saved! Find it in My Stories.");
+      toast.success(t("story.savedSuccess"));
     } else {
-      toast.error("Failed to save story. Please try again.");
+      toast.error(t("story.saveError"));
     }
     setSavingStory(false);
   };
@@ -88,10 +180,10 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
         : "story";
 
       doc.save(`${filename}.pdf`);
-      toast.success("Story saved as PDF!");
+      toast.success(t("story.pdfSuccess"));
     } catch (e) {
       console.error("PDF error:", e);
-      toast.error("Failed to save PDF. Please try again.");
+      toast.error(t("story.pdfError"));
     } finally {
       setSaving(false);
     }
@@ -145,23 +237,78 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
       <div className="flex items-center justify-center gap-2 mb-6">
         <BookOpen className="w-5 h-5 text-golden" />
         <span className="category-label">
-          {isStreaming ? "Writing your story…" : "Your Story"}
+          {isStreaming ? t("story.writing") : t("story.yourStory")}
         </span>
         {isStreaming && (
           <Loader2 className="w-4 h-4 text-golden animate-spin" />
         )}
         {!isStreaming && fromCache && (
           <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
-            <Zap className="w-3 h-3" /> From cache
+            <Zap className="w-3 h-3" /> {t("story.fromCache")}
           </span>
         )}
       </div>
 
       <div className="story-card">
+        {/* Audio player — shown at top of card once story is available */}
+        {story && !isStreaming && (
+          <div className="flex items-center gap-3 mb-5 pb-4 border-b border-border">
+            {audioState === "idle" || audioState === "error" ? (
+              <button
+                onClick={handleListen}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-golden hover:text-golden/80 transition-colors"
+              >
+                <Headphones className="w-4 h-4" />
+                {t("story.listen")}
+              </button>
+            ) : audioState === "loading" ? (
+              <span className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t("story.audioLoading")}
+              </span>
+            ) : (
+              <>
+                {audioState === "playing" ? (
+                  <button
+                    onClick={handlePause}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-golden hover:text-golden/80 transition-colors"
+                  >
+                    <Pause className="w-4 h-4" />
+                    {t("story.pauseAudio")}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => playAudio(resolvedAudioUrl!)}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-golden hover:text-golden/80 transition-colors"
+                  >
+                    <Play className="w-4 h-4" />
+                    {t("story.playAudio")}
+                  </button>
+                )}
+                <button
+                  onClick={handleStop}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Stop audio"
+                >
+                  <Square className="w-3.5 h-3.5" />
+                </button>
+                <a
+                  href={resolvedAudioUrl!}
+                  download
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors ml-auto"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  {t("story.downloadAudio")}
+                </a>
+              </>
+            )}
+          </div>
+        )}
+
         {story ? renderStory(story) : (
           <div className="text-center py-12">
             <Loader2 className="w-8 h-8 text-golden animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Crafting something magical…</p>
+            <p className="text-muted-foreground">{t("story.crafting")}</p>
           </div>
         )}
       </div>
@@ -180,7 +327,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
                 ) : (
                   <Bookmark className="w-4 h-4" />
                 )}
-                {storySaved ? "Saved!" : savingStory ? "Saving…" : "Save Story"}
+                {storySaved ? t("story.saved") : savingStory ? t("story.saving") : t("story.saveStory")}
               </button>
               <button
                 onClick={handleSavePdf}
@@ -188,7 +335,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
                 className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors inline-flex items-center gap-2"
               >
                 {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                {saving ? "Saving…" : "Save as PDF"}
+                {saving ? t("story.saving") : t("story.saveAsPdf")}
               </button>
             </>
           ) : (
@@ -198,7 +345,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
               className="btn-primary inline-flex items-center gap-2"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              {saving ? "Saving…" : "Save as PDF"}
+              {saving ? t("story.saving") : t("story.saveAsPdf")}
             </button>
           )}
           <button
@@ -206,7 +353,7 @@ const StoryDisplay = ({ story, onRestart, isStreaming, fromCache, isLoggedIn }: 
             className="text-muted-foreground text-sm font-semibold hover:text-foreground transition-colors inline-flex items-center gap-2"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Create Another Story
+            {t("story.createAnother")}
           </button>
         </div>
       )}

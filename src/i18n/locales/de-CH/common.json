@@ -38,7 +38,13 @@
     "savedSuccess": "Geschichte gespeichert! Findest du unter Meine Geschichten.",
     "saveError": "Fehler beim Speichern. Bitte versuche es erneut.",
     "pdfSuccess": "Geschichte als PDF gespeichert!",
-    "pdfError": "Fehler beim Speichern als PDF. Bitte versuche es erneut."
+    "pdfError": "Fehler beim Speichern als PDF. Bitte versuche es erneut.",
+    "listen": "Anhören",
+    "pauseAudio": "Pausieren",
+    "playAudio": "Abspielen",
+    "audioLoading": "Audio wird geladen…",
+    "downloadAudio": "Audio herunterladen",
+    "audioError": "Audio nicht verfügbar. Bitte versuche es erneut."
   },
   "login": {
     "subtitle": "Melde dich an und erstelle magische Geschichten",

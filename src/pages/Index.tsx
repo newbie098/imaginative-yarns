@@ -61,6 +61,7 @@ const Index = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [story, setStory] = useState("");
   const [fromCache, setFromCache] = useState(false);
+  const [storyAudioUrl, setStoryAudioUrl] = useState<string | null>(null);
   const [sessionQuestions] = useState(() => buildSessionQuestions());
 
   const pastPicks = useMemo(() => getPastPicks(), []);
@@ -81,6 +82,7 @@ const Index = () => {
     savePicks(finalAnswers);
     setStory("");
     setFromCache(false);
+    setStoryAudioUrl(null);
     setPhase("generating");
 
     getCachedStory(finalAnswers).then((cached) => {
@@ -141,6 +143,7 @@ const Index = () => {
     setAnswers({});
     setStory("");
     setFromCache(false);
+    setStoryAudioUrl(null);
     window.location.reload();
   }, []);
 
@@ -214,6 +217,8 @@ const Index = () => {
             isStreaming={phase === "generating"}
             fromCache={fromCache}
             isLoggedIn={!!user}
+            audioUrl={storyAudioUrl ?? undefined}
+            onAudioGenerated={setStoryAudioUrl}
           />
         )}
       </div>

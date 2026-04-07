@@ -38,7 +38,13 @@
     "savedSuccess": "Story saved! Find it in My Stories.",
     "saveError": "Failed to save story. Please try again.",
     "pdfSuccess": "Story saved as PDF!",
-    "pdfError": "Failed to save PDF. Please try again."
+    "pdfError": "Failed to save PDF. Please try again.",
+    "listen": "Listen",
+    "pauseAudio": "Pause",
+    "playAudio": "Play",
+    "audioLoading": "Loading audio…",
+    "downloadAudio": "Download audio",
+    "audioError": "Audio unavailable. Please try again."
   },
   "login": {
     "subtitle": "Sign in to start creating magical stories",
