@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import LocaleLayout from "./components/LocaleLayout";
+import { FeedbackButton } from "@/components/FeedbackButton";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SavedStories from "./pages/SavedStories";
@@ -44,6 +45,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FeedbackButton />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
