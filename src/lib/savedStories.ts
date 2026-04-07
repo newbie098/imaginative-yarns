@@ -4,7 +4,7 @@ export interface SavedStory {
   id: string;
   title: string;
   story_text: string;
-  audio_url: string | null;
+  audio_url?: string | null;
   created_at: string;
 }
 
@@ -31,9 +31,12 @@ export async function saveStory(
 export async function getSavedStories(): Promise<SavedStory[]> {
   const { data, error } = await supabase
     .from("saved_stories")
-    .select("id, title, story_text, audio_url, created_at")
+    .select("*")
     .order("created_at", { ascending: false });
-  if (error) return [];
+  if (error) {
+    console.error("getSavedStories error:", error.message);
+    return [];
+  }
   return (data as SavedStory[]) || [];
 }
 
