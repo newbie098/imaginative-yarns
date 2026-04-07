@@ -4,6 +4,7 @@ export interface SavedStory {
   id: string;
   title: string;
   story_text: string;
+  audio_url: string | null;
   created_at: string;
 }
 
@@ -13,13 +14,16 @@ export function extractStoryTitle(storyText: string): string {
   return match ? match[1].trim() : "My Story";
 }
 
-export async function saveStory(storyText: string): Promise<{ ok: boolean; error?: string }> {
+export async function saveStory(
+  storyText: string,
+  audioUrl?: string | null
+): Promise<{ ok: boolean; error?: string }> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Not signed in" };
   const title = extractStoryTitle(storyText);
   const { error } = await supabase
     .from("saved_stories")
-    .insert({ user_id: user.id, title, story_text: storyText });
+    .insert({ user_id: user.id, title, story_text: storyText, audio_url: audioUrl ?? null });
   if (error) return { ok: false, error: error.message };
   return { ok: true };
 }
@@ -27,7 +31,7 @@ export async function saveStory(storyText: string): Promise<{ ok: boolean; error
 export async function getSavedStories(): Promise<SavedStory[]> {
   const { data, error } = await supabase
     .from("saved_stories")
-    .select("id, title, story_text, created_at")
+    .select("id, title, story_text, audio_url, created_at")
     .order("created_at", { ascending: false });
   if (error) return [];
   return (data as SavedStory[]) || [];

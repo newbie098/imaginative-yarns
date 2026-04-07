@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, ArrowLeft, Trash2, Loader2, BookMarked } from "lucide-react";
+import { BookOpen, ArrowLeft, Trash2, Loader2, BookMarked, Headphones, Play, Pause, Square, Download } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { getSavedStories, deleteSavedStory, type SavedStory } from "@/lib/savedStories";
 import StoryHeader from "@/components/StoryHeader";
+import { generateStoryAudio } from "@/lib/storyAudio";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import i18next from "@/i18n";
 import { useLocale } from "@/contexts/LocaleContext";
 
 const SavedStories = () => {
@@ -16,6 +18,9 @@ const SavedStories = () => {
   const [loadingStories, setLoadingStories] = useState(true);
   const [openStory, setOpenStory] = useState<SavedStory | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [audioState, setAudioState] = useState<"idle" | "loading" | "playing" | "paused" | "error">("idle");
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { t } = useTranslation();
   const { locale, localePath } = useLocale();
 
@@ -40,6 +45,74 @@ const SavedStories = () => {
       });
     }
   }, [user]);
+
+  const stopAndResetAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setAudioState("idle");
+    setAudioUrl(null);
+  };
+
+  const handleOpenStory = (story: SavedStory) => {
+    stopAndResetAudio();
+    setOpenStory(story);
+    if (story.audio_url) {
+      setAudioUrl(story.audio_url);
+      setAudioState("paused");
+    }
+  };
+
+  const handleCloseStory = () => {
+    stopAndResetAudio();
+    setOpenStory(null);
+  };
+
+  const playAudio = (url: string) => {
+    if (!audioRef.current || audioRef.current.src !== url) {
+      if (audioRef.current) audioRef.current.pause();
+      const audio = new Audio(url);
+      audio.onended = () => setAudioState("paused");
+      audio.onerror = () => {
+        toast.error(t("story.audioError"));
+        setAudioState("error");
+      };
+      audioRef.current = audio;
+    }
+    audioRef.current.play();
+    setAudioState("playing");
+  };
+
+  const handleListen = async () => {
+    if (audioUrl) {
+      playAudio(audioUrl);
+      return;
+    }
+    if (!openStory) return;
+    setAudioState("loading");
+    try {
+      const url = await generateStoryAudio(openStory.story_text, i18next.language);
+      setAudioUrl(url);
+      playAudio(url);
+    } catch {
+      toast.error(t("story.audioError"));
+      setAudioState("error");
+    }
+  };
+
+  const handlePause = () => {
+    audioRef.current?.pause();
+    setAudioState("paused");
+  };
+
+  const handleStop = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setAudioState("paused");
+  };
 
   const handleDelete = async (id: string) => {
     setDeleting(id);
@@ -135,12 +208,64 @@ const SavedStories = () => {
               transition={{ duration: 0.3 }}
             >
               <button
-                onClick={() => setOpenStory(null)}
+                onClick={handleCloseStory}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors font-semibold inline-flex items-center gap-1 mb-4"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> {t("savedStories.allStories")}
               </button>
               <div className="story-card">
+                {/* Audio player */}
+                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-border">
+                  {audioState === "idle" || audioState === "error" ? (
+                    <button
+                      onClick={handleListen}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-golden hover:text-golden/80 transition-colors"
+                    >
+                      <Headphones className="w-4 h-4" />
+                      {t("story.listen")}
+                    </button>
+                  ) : audioState === "loading" ? (
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {t("story.audioLoading")}
+                    </span>
+                  ) : (
+                    <>
+                      {audioState === "playing" ? (
+                        <button
+                          onClick={handlePause}
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-golden hover:text-golden/80 transition-colors"
+                        >
+                          <Pause className="w-4 h-4" />
+                          {t("story.pauseAudio")}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => playAudio(audioUrl!)}
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-golden hover:text-golden/80 transition-colors"
+                        >
+                          <Play className="w-4 h-4" />
+                          {t("story.playAudio")}
+                        </button>
+                      )}
+                      <button
+                        onClick={handleStop}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label="Stop audio"
+                      >
+                        <Square className="w-3.5 h-3.5" />
+                      </button>
+                      <a
+                        href={audioUrl!}
+                        download
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors ml-auto"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        {t("story.downloadAudio")}
+                      </a>
+                    </>
+                  )}
+                </div>
                 {renderStoryText(openStory.story_text)}
               </div>
               <div className="flex items-center justify-between mt-4 px-1">
@@ -171,7 +296,7 @@ const SavedStories = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: idx * 0.05 }}
                 className="story-card cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => setOpenStory(story)}
+                onClick={() => handleOpenStory(story)}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
