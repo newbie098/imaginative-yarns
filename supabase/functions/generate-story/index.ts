@@ -144,7 +144,7 @@ Return ONLY valid JSON in this exact shape (no markdown, no prose, no commentary
     { "act": 2, "what_happens": "...", "twist": "..." },
     { "act": 3, "what_happens": "..." }
   ],
-  "tone_note": "...",
+  "tone_note": "...",                  // MAX 6 WORDS, plain register only. Forbidden: "whimsical", "dreamy", "atmospheric", "sensory-rich", "lyrical", "poetic". Examples: "warm and silly", "quiet and curious", "a little spooky but kind".
   "one_real_detail": "..."
 }`;
 
@@ -208,9 +208,52 @@ You will be given a SCAFFOLD (JSON) prepared by a story planner. Follow it exact
 
 CRITICAL WRITING RULES:
 
-VOCABULARY (the most important rule):
+ABSOLUTE RULES — these override every other writing instinct:
+
+SENTENCE LENGTH IS A HARD LIMIT:
+- Count the words in every sentence as you write it. If a sentence is over 12 words, you MUST split it into two sentences.
+- No "as", "while", or "where" clauses joining two events. One idea per sentence.
+- This rule overrides every literary or stylistic instinct.
+
+BANNED STRUCTURES:
+- NO em-dashes (—). Period. If you want to add a detail, write a new short sentence instead.
+- NO similes ("like a X"). If you write the word "like" introducing a comparison, delete it and rewrite literally.
+- NO inverted syntax. Every sentence must start with a subject. WRONG: "In her fist is a key." RIGHT: "She held a key."
+- NO appositive lists. WRONG: "all three of us moved slow — me pushing the scooter, them holding hands, the fairy safe." RIGHT: "All three of us moved slow. I pushed my scooter. They held my hand. The fairy was safe."
+- ONE action per sentence. If a sentence contains "as" or "while" joining two events, split it.
+
+BANNED WORDS — never use these or words like them:
+- pennants, brass, landing (as a place), carved, woven, glinting, snapping, drifting, looming, towering, perched, nestled, faintly, softly, amidst, glimmer, ventured, majestic.
+- Use plain words instead: flags, metal, top of the stairs, made, scratched, with, going, big, tall, sitting, sat, quietly, lightly.
+
+EXAMPLES — bad sentences from past stories, and the rewrites you should aim for:
+
+BAD (too long, two ideas joined by "as"): "Blue pennants snap in the wind as the tiny brass bell on the little witch's boot goes plink against the stone."
+GOOD (split, plain words): "Blue flags snapped in the wind. The tiny bell on her boot went plink."
+
+BAD (relative clause, hard to hear): "The little witch hurries up twisty stairs to a landing where puffy clouds are carved all over one big door."
+GOOD (broken into beats): "She hurried up the curly stairs. At the top was a big door. Puffy clouds were drawn on it."
+
+BAD (three actions stacked): "Ding-ding goes my silver scooter bell as a tiny fairy peeks from its shiny cup and chalk dust puffs at my wheels."
+GOOD (one action per sentence): "My scooter bell went ding-ding. A tiny fairy peeked out of the cup. Chalk dust puffed up at my wheels."
+
+BAD (inverted syntax + simile + em-dash): "In her fist is a palm-sized key that shines in all colors, like bubble soap in the sun. She tucks the rainbow key into my pocket—warm, almost squirmy."
+GOOD (subject-first, no simile, no em-dash): "She held a key in her fist. It shone in all colors. She tucked the rainbow key into my pocket. It felt warm."
+
+BAD (pure simile, no plot): "The hallway light hums above me, like a sleepy bee stuck behind glass."
+GOOD (literal, useful): "The hallway light hummed above me. The hum was soft and low."
+
+BAD (em-dash + relative clause): "I pull the door wide and help them out—a kid with untied shoes who hugs me around the waist so fast I almost tip over."
+GOOD (three short sentences): "I pulled the door open. A kid with untied shoes climbed out. He hugged me so fast I almost tipped over."
+
+BAD (adverbial setup + em-dash + appositive list): "On our way outside, all three of us move slow—me pushing my scooter, them holding hands with me tight, the tiny fairy safe in her bell cup."
+GOOD (broken into sentences): "We walked outside slowly. I pushed my scooter. He held my hand tight. The tiny fairy was safe in the bell cup."
+
+OTHER WRITING RULES:
+
+VOCABULARY:
 - Use only words a ${childAge}-year-old already knows. When in doubt, use the simpler word.
-- NEVER use literary, archaic, or unusual adjectives and verbs ("amidst", "glimmer", "nestled", "ventured", "majestic"). This is a story to be heard out loud — every word must be immediately understood by ear.
+- NEVER use literary, archaic, or unusual adjectives and verbs. This is a story to be heard out loud — every word must be immediately understood by ear.
 
 ONE DETAIL PER THING:
 - One simple detail per object, person, or place. Never stack descriptions.
