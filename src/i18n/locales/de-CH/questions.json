@@ -117,16 +117,6 @@
     "prompt": "Was ist eine witzige, seltsame oder überraschende Sache, die in deiner Geschichte UNBEDINGT passieren muss?",
     "placeholder": "z.B. Eine tanzende Ananas taucht auf…"
   },
-  "ending": {
-    "category": "Ende",
-    "title": "Wie endet es?",
-    "prompt": "Wähle, wie die Geschichte aufhört!",
-    "options": {
-      "twist": "Grosse Überraschung!",
-      "happy": "Happy End",
-      "lesson": "Eine gelernte Lektion"
-    }
-  },
   "length": {
     "category": "Länge",
     "title": "Wie lang soll sie sein?",
