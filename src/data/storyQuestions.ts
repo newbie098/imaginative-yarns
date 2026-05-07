@@ -154,6 +154,29 @@ export const storyQuestions: StoryQuestion[] = [
     placeholder: "e.g. A dancing pineapple shows up…",
     optional: true,
   },
+  {
+    id: "ending",
+    category: "Ending",
+    title: "How does it end?",
+    prompt: "Pick how the story wraps up!",
+    type: "choice",
+    options: [
+      { id: "twist", label: "Big Surprise!", emoji: "🎉" },
+      { id: "happy", label: "Happy Ever After", emoji: "🌈" },
+      { id: "lesson", label: "A Lesson Learned", emoji: "📚" },
+    ],
+  },
+  {
+    id: "length",
+    category: "Length",
+    title: "How long should it be?",
+    prompt: "Pick the perfect story size!",
+    type: "choice",
+    options: [
+      { id: "short", label: "Quick Tale (2–3 min)", emoji: "📗" },
+      { id: "medium", label: "Adventure (3–5 min)", emoji: "📘" },
+    ],
+  },
 ];
 
 /**

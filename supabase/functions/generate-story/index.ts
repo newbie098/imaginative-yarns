@@ -4,9 +4,6 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const PLANNER_MODEL = "gpt-5";
-const WRITER_MODEL = "gpt-4.1";
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
@@ -24,7 +21,7 @@ Deno.serve(async (req) => {
       medium: "approximately 500-800 words (3-5 minute read-aloud)",
       long: "approximately 800-1200 words (5-8 minute read-aloud)",
     };
-    const storyLength = lengthMap[answers.length] || lengthMap.short;
+    const storyLength = lengthMap[answers.length] || lengthMap.medium;
 
     // Child age — default to 6 if not provided
     const childAge = answers.child_age ? parseInt(answers.child_age, 10) : 6;
@@ -102,231 +99,78 @@ Deno.serve(async (req) => {
       ? `\nLANGUAGE: Write the entire story in Standard German (Hochdeutsch). Use neutral, child-friendly Standard German appropriate for Swiss children — avoid regional expressions specific to Austria or Germany. The title and all dialogue must be in German.\n`
       : "";
 
-    // Compact list of the child's chosen ingredients for the planner.
-    const ingredientsList = [
-      `- Hero type: ${answers.hero_type}`,
-      `- Hero's name: ${answers.hero_name}`,
-      `- Sidekick: ${answers.sidekick}`,
-      `- Setting: ${answers.setting}`,
-      `- Story mood: ${answers.mood}`,
-      `- The big problem: ${answers.problem}`,
-      answers.power ? `- Special power: ${answers.power}` : null,
-      answers.object ? `- Magical object: ${answers.object}` : null,
-      answers.wildcard ? `- Wildcard (MUST include if present): ${answers.wildcard}` : null,
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    // -------------------------- PASS 1: PLANNER --------------------------
-    const plannerSystemPrompt = `You are a story architect for a children's storytelling app. You do NOT write prose. Your job is to plan a memorable story for a ${childAge}-year-old child, then return a JSON scaffold that another model will use to write the actual prose.
-
-Your goals, in order:
-1. PICK FOCUS. The child has chosen many ingredients. Most stories feel forgettable because they cram everything in. Choose the 3–4 ingredients that fit together best and form a coherent emotional spine. Skip the rest. The wildcard, if provided, MUST be one of the chosen ingredients.
-2. PLANT A CALLBACK. Invent ONE small, specific, sensory detail (an object, a phrase, a sound, a smell, a habit) that will appear early as a throwaway and return at the climax with new meaning. The callback should NOT be one of the big ingredients (hero, setting, magical object). It should be small and surprising — a button, a hum, a crooked smile, a particular word the hero says. The transformation at the climax is what makes the story memorable.
-3. OPEN WITH AN IMAGE, NOT EXPOSITION. The first sentence must be a concrete sensory moment, not "Once upon a time" and not setting description. Plan exactly what the listener sees, hears, or smells in the very first beat.
-4. STRUCTURE IN 3 BEATS. Setup → escalation with one real twist → resolution that lands the callback. Resolution must come from cleverness, dialogue, or empathy — never violence. Do NOT default to "happy ever after"; let the ending grow naturally from the twist and the callback.
-5. KEEP THE WORLD SMALL. One location, or two at most. Crowded worlds confuse young listeners.
-
-Return ONLY valid JSON in this exact shape (no markdown, no prose, no commentary):
-
-{
-  "chosen_elements": ["..."],
-  "skipped_elements": ["..."],
-  "opening_image": "...",
-  "callback": {
-    "seed": "...",
-    "setup": "...",
-    "payoff": "...",
-    "why_it_lands": "..."
-  },
-  "beats": [
-    { "act": 1, "what_happens": "..." },
-    { "act": 2, "what_happens": "...", "twist": "..." },
-    { "act": 3, "what_happens": "..." }
-  ],
-  "tone_note": "...",                  // MAX 6 WORDS, plain register only. Forbidden: "whimsical", "dreamy", "atmospheric", "sensory-rich", "lyrical", "poetic". Examples: "warm and silly", "quiet and curious", "a little spooky but kind".
-  "one_real_detail": "..."
-}`;
-
-    const plannerUserPrompt = `Plan a ${storyLength} story for a ${childAge}-year-old. The child chose:
-
-${ingredientsList}
-
-Pick the strongest 3–4. Plant a callback. Plan the opening image. Return JSON only.`;
-
-    const plannerResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: PLANNER_MODEL,
-        messages: [
-          { role: "system", content: plannerSystemPrompt },
-          { role: "user", content: plannerUserPrompt },
-        ],
-        response_format: { type: "json_object" },
-      }),
-    });
-
-    if (!plannerResponse.ok) {
-      if (plannerResponse.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit reached. Please wait a moment and try again." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const t = await plannerResponse.text();
-      console.error("Planner error:", plannerResponse.status, t);
-      return new Response(
-        JSON.stringify({ error: "Story planning failed. Please try again." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const plannerJson = await plannerResponse.json();
-    const scaffold = plannerJson?.choices?.[0]?.message?.content ?? "";
-    if (!scaffold) {
-      console.error("Planner returned empty content", plannerJson);
-      return new Response(
-        JSON.stringify({ error: "Story planning failed. Please try again." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // -------------------------- PASS 2: WRITER --------------------------
-    const writerSystemPrompt = `You are a master children's storyteller writing original, memorable stories for a ${childAge}-year-old child.
+    const systemPrompt = `You are a master children's storyteller. You create original, creative stories perfectly tailored for a ${childAge}-year-old child.
 ${languageInstruction}
-You will be given a SCAFFOLD (JSON) prepared by a story planner. Follow it exactly:
-- Use ONLY the chosen_elements. Do NOT mention skipped_elements.
-- Begin the story with the planned opening_image. Your first sentence must be a concrete sensory moment — something seen, heard, smelled, or touched. NEVER begin with "Once upon a time", "In a faraway land", or any setting/exposition sentence.
-- Plant the callback.seed in beat 1 as a small throwaway detail (do not draw attention to it). Bring it back transformed at the climax exactly as described in callback.payoff. Do not announce the callback; let it land quietly.
-- Hit each of the 3 beats. Honor the twist in act 2.
-- Weave in the one_real_detail somewhere — a mundane, true-to-life touch that grounds the fantasy.
-- Match the tone_note.
+CRITICAL GUIDELINES:
+- VOCABULARY IS THE MOST IMPORTANT RULE: Use only words that a ${childAge}-year-old already knows. If in doubt, use a simpler word. NEVER use literary, archaic, or unusual adjectives and verbs. This is a spoken story for a young child — every word must be immediately understood when heard out loud.
+- NEVER stack descriptions. One simple detail per thing is enough. Do NOT write sentences like "Amidst the colorful jumble of buttons, zippers, and stray threads, Lili noticed a glimmer beneath a blue button the size of a dinner plate." Instead write: "Lili saw something shiny under a big blue button."
+- NEVER preach or moralize. Do NOT have characters say things like "sharing is caring" or "we should always be kind."
+- Instead, SHOW good values (kindness, sharing, resolving conflict through dialogue, empathy, courage, honesty) through the ACTIONS and CHOICES of characters naturally within the plot. Let the parent and child discover the meaning together.
+- Use binary gender pronouns (she/he) for characters, not "they" as a singular pronoun.
+- Be genuinely creative — avoid formulaic "hero's journey" templates. Surprise the reader with simple, unexpected moments of fun, warmth, or silliness.
+- Draw inspiration from a wide range of storytelling traditions — fairy tales, fables, tall tales, trickster stories. Keep the world familiar and accessible to young children.
+- Characters should have one clear personality trait. Dialogue should sound like how a real child talks — short, natural, fun.
+- Conflict resolution should come through conversation, cleverness, empathy, or cooperation — never through violence.
+- The tone should match the mood the child selected (funny, magical, spooky, mystery).
 
-CRITICAL WRITING RULES:
-
-ABSOLUTE RULES — these override every other writing instinct:
-
-SENTENCE LENGTH IS A HARD LIMIT:
-- Count the words in every sentence as you write it. If a sentence is over 12 words, you MUST split it into two sentences.
-- No "as", "while", or "where" clauses joining two events. One idea per sentence.
-- This rule overrides every literary or stylistic instinct.
-
-BANNED STRUCTURES:
-- NO em-dashes (—). Period. If you want to add a detail, write a new short sentence instead.
-- NO similes ("like a X"). If you write the word "like" introducing a comparison, delete it and rewrite literally.
-- NO inverted syntax. Every sentence must start with a subject. WRONG: "In her fist is a key." RIGHT: "She held a key."
-- NO appositive lists. WRONG: "all three of us moved slow — me pushing the scooter, them holding hands, the fairy safe." RIGHT: "All three of us moved slow. I pushed my scooter. They held my hand. The fairy was safe."
-- ONE action per sentence. If a sentence contains "as" or "while" joining two events, split it.
-
-BANNED WORDS — never use these or words like them:
-- pennants, brass, landing (as a place), carved, woven, glinting, snapping, drifting, looming, towering, perched, nestled, faintly, softly, amidst, glimmer, ventured, majestic.
-- Use plain words instead: flags, metal, top of the stairs, made, scratched, with, going, big, tall, sitting, sat, quietly, lightly.
-
-EXAMPLES — bad sentences from past stories, and the rewrites you should aim for:
-
-BAD (too long, two ideas joined by "as"): "Blue pennants snap in the wind as the tiny brass bell on the little witch's boot goes plink against the stone."
-GOOD (split, plain words): "Blue flags snapped in the wind. The tiny bell on her boot went plink."
-
-BAD (relative clause, hard to hear): "The little witch hurries up twisty stairs to a landing where puffy clouds are carved all over one big door."
-GOOD (broken into beats): "She hurried up the curly stairs. At the top was a big door. Puffy clouds were drawn on it."
-
-BAD (three actions stacked): "Ding-ding goes my silver scooter bell as a tiny fairy peeks from its shiny cup and chalk dust puffs at my wheels."
-GOOD (one action per sentence): "My scooter bell went ding-ding. A tiny fairy peeked out of the cup. Chalk dust puffed up at my wheels."
-
-BAD (inverted syntax + simile + em-dash): "In her fist is a palm-sized key that shines in all colors, like bubble soap in the sun. She tucks the rainbow key into my pocket—warm, almost squirmy."
-GOOD (subject-first, no simile, no em-dash): "She held a key in her fist. It shone in all colors. She tucked the rainbow key into my pocket. It felt warm."
-
-BAD (pure simile, no plot): "The hallway light hums above me, like a sleepy bee stuck behind glass."
-GOOD (literal, useful): "The hallway light hummed above me. The hum was soft and low."
-
-BAD (em-dash + relative clause): "I pull the door wide and help them out—a kid with untied shoes who hugs me around the waist so fast I almost tip over."
-GOOD (three short sentences): "I pulled the door open. A kid with untied shoes climbed out. He hugged me so fast I almost tipped over."
-
-BAD (adverbial setup + em-dash + appositive list): "On our way outside, all three of us move slow—me pushing my scooter, them holding hands with me tight, the tiny fairy safe in her bell cup."
-GOOD (broken into sentences): "We walked outside slowly. I pushed my scooter. He held my hand tight. The tiny fairy was safe in the bell cup."
-
-OTHER WRITING RULES:
-
-VOCABULARY:
-- Use only words a ${childAge}-year-old already knows. When in doubt, use the simpler word.
-- NEVER use literary, archaic, or unusual adjectives and verbs. This is a story to be heard out loud — every word must be immediately understood by ear.
-
-ONE DETAIL PER THING:
-- One simple detail per object, person, or place. Never stack descriptions.
-- BAD: "Amidst the colorful jumble of buttons, zippers, and stray threads, Lili noticed a glimmer beneath a blue button the size of a dinner plate."
-- GOOD: "Lili saw something shiny under a big blue button."
-
-CALLBACKS, NOT MORALS:
-- NEVER preach, moralize, or have characters say things like "sharing is caring" or "we should always be kind."
-- SHOW values (kindness, empathy, courage, honesty) through ACTIONS and CHOICES inside the plot. Let parent and child discover the meaning together.
-
-CHARACTERS AND DIALOGUE:
-- One clear personality trait per character. No more.
-- Dialogue should sound like how a real child talks — short, natural, fun. Read it out loud in your head; if it sounds like a grown-up wrote it, rewrite.
-- Use binary pronouns (she/he), not singular "they".
-- Conflict resolves through conversation, cleverness, empathy, or cooperation. Never through violence.
-
-FRESHNESS:
-- Avoid formulaic hero's-journey templates and stock phrases ("his eyes sparkled", "her heart raced", "little did she know").
-- Surprise the reader with small, unexpected moments of warmth, silliness, or specificity.
-
-AGE-SPECIFIC STYLE (child is ${childAge} years old):
+AGE-SPECIFIC WRITING STYLE (child is ${childAge} years old):
 ${ageGuidelines}
 
 OUTPUT FORMAT:
-- Markdown.
+- Write in Markdown.
 - Start with a title as # heading.
-- Use --- for scene breaks (one per beat transition).
-- Use **bold** for the magical object, character names on first mention, and the callback payoff moment.
+- Use --- for scene breaks.
+- Use **bold** for emphasis on magical objects, character names on first mention, and key moments.
 - End with "**The End** ✨"
-- Stop cleanly after "The End". Do not add commentary or explanation.`;
+- End cleanly after "The End" marker.`;
 
-    const writerUserPrompt = `Write the story now, following the scaffold below exactly. The child is ${childAge} years old. Length: ${storyLength}.
+    const userPrompt = `Create a ${storyLength} children's story for a ${childAge}-year-old with these elements chosen by the child:
 
-SCAFFOLD:
-${scaffold}
+- Hero type: ${answers.hero_type}
+- Hero's name: ${answers.hero_name}
+- Sidekick: ${answers.sidekick}
+- Setting: ${answers.setting}
+- Story mood: ${answers.mood}
+- The big problem: ${answers.problem}
+- Special power: ${answers.power}
+- Magical object: ${answers.object}
+- Ending style: ${answers.ending}
+${answers.wildcard ? `- Wild card (MUST include this): ${answers.wildcard}` : ""}
 
-Remember: open with the planned sensory image (NOT "Once upon a time"), plant the callback seed quietly in beat 1, land it transformed at the climax. Show values through action. Make every word easy to hear out loud.`;
+Remember: Be creative, show values through action not words, calibrate vocabulary and sentence complexity for a ${childAge}-year-old, and make it enchanting for a young listener.`;
 
-    const writerResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: WRITER_MODEL,
+        model: "gpt-4o",
         messages: [
-          { role: "system", content: writerSystemPrompt },
-          { role: "user", content: writerUserPrompt },
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
         ],
-        temperature: 1.0,
-        frequency_penalty: 0.2,
-        presence_penalty: 0.4,
         stream: true,
       }),
     });
 
-    if (!writerResponse.ok) {
-      if (writerResponse.status === 429) {
+    if (!response.ok) {
+      if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit reached. Please wait a moment and try again." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      const t = await writerResponse.text();
-      console.error("Writer error:", writerResponse.status, t);
+      const t = await response.text();
+      console.error("OpenAI error:", response.status, t);
       return new Response(
         JSON.stringify({ error: "Story generation failed. Please try again." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    return new Response(writerResponse.body, {
+    return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {

@@ -116,5 +116,24 @@
     "title": "Add something wild!",
     "prompt": "What's one silly, weird, or surprising thing that MUST happen in your story?",
     "placeholder": "e.g. A dancing pineapple shows up…"
+  },
+  "ending": {
+    "category": "Ending",
+    "title": "How does it end?",
+    "prompt": "Pick how the story wraps up!",
+    "options": {
+      "twist": "Big Surprise!",
+      "happy": "Happy Ever After",
+      "lesson": "A Lesson Learned"
+    }
+  },
+  "length": {
+    "category": "Length",
+    "title": "How long should it be?",
+    "prompt": "Pick the perfect story size!",
+    "options": {
+      "short": "Quick Tale (2–3 min)",
+      "medium": "Adventure (3–5 min)"
+    }
   }
 }

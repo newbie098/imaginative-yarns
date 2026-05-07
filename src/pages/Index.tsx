@@ -20,12 +20,14 @@ type Phase = "welcome" | "questions" | "generating" | "story";
  * Question order:
  * - Index 0: child_age (always first, never shuffled)
  * - Indices 1–2: hero_type, hero_name (anchor start)
- * - Rest: shuffled
+ * - Indices 3–(n-3): middle questions (shuffled)
+ * - Last 2: ending, length (anchor end)
  */
 function buildSessionQuestions() {
   const anchor_first = storyQuestions.slice(0, 1); // child_age
   const anchor_start = storyQuestions.slice(1, 3); // hero_type, hero_name
-  const middle = [...storyQuestions.slice(3)];
+  const anchor_end = storyQuestions.slice(-2);      // ending, length
+  const middle = [...storyQuestions.slice(3, -2)];
 
   // Fisher-Yates shuffle middle
   for (let i = middle.length - 1; i > 0; i--) {
@@ -35,9 +37,9 @@ function buildSessionQuestions() {
 
   const pastPicks = getPastPicks();
 
-  const questions = [...anchor_first, ...anchor_start, ...middle].map((q) => {
+  const questions = [...anchor_first, ...anchor_start, ...middle, ...anchor_end].map((q) => {
     if (q.type === "choice" && q.options) {
-      const displayCount = 4;
+      const displayCount = q.id === "length" ? q.options.length : 4;
       return {
         ...q,
         options: selectRandomOptions(q.options, displayCount, pastPicks[q.id] || []),

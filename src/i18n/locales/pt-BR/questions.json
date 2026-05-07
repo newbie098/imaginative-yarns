@@ -116,5 +116,24 @@
     "title": "Adicione algo maluco!",
     "prompt": "Qual é uma coisa boba, estranha ou surpreendente que DEVE acontecer na sua história?",
     "placeholder": "Ex: Um abacaxi dançante aparece…"
+  },
+  "ending": {
+    "category": "Final",
+    "title": "Como termina?",
+    "prompt": "Escolha como a história acaba!",
+    "options": {
+      "twist": "Grande Surpresa!",
+      "happy": "Felizes Para Sempre",
+      "lesson": "Uma Lição Aprendida"
+    }
+  },
+  "length": {
+    "category": "Tamanho",
+    "title": "Qual o tamanho da história?",
+    "prompt": "Escolha o tamanho perfeito!",
+    "options": {
+      "short": "Continho Rápido (2–3 min)",
+      "medium": "Aventura Completa (3–5 min)"
+    }
   }
 }
