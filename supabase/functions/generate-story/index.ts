@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
       medium: "approximately 500-800 words (3-5 minute read-aloud)",
       long: "approximately 800-1200 words (5-8 minute read-aloud)",
     };
-    const storyLength = lengthMap[answers.length] || lengthMap.medium;
+    const storyLength = lengthMap[answers.length] || lengthMap.short;
 
     // Child age — default to 6 if not provided
     const childAge = answers.child_age ? parseInt(answers.child_age, 10) : 6;
