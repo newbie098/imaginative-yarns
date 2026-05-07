@@ -6,7 +6,6 @@ const corsHeaders = {
 
 const PLANNER_MODEL = "gpt-5";
 const WRITER_MODEL = "gpt-4.1";
-const EDITOR_MODEL = "gpt-4.1-mini";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS")
@@ -308,7 +307,7 @@ Remember: open with the planned sensory image (NOT "Once upon a time"), plant th
         temperature: 1.0,
         frequency_penalty: 0.2,
         presence_penalty: 0.4,
-        stream: false,
+        stream: true,
       }),
     });
 
@@ -327,102 +326,7 @@ Remember: open with the planned sensory image (NOT "Once upon a time"), plant th
       );
     }
 
-    const writerJson = await writerResponse.json();
-    const draftStory = writerJson?.choices?.[0]?.message?.content ?? "";
-    if (!draftStory) {
-      console.error("Writer returned empty content", writerJson);
-      return new Response(
-        JSON.stringify({ error: "Story generation failed. Please try again." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // -------------------------- PASS 3: EDITOR --------------------------
-    const editorSystemPrompt = `You are a copy editor for a children's storytelling app. You receive a draft children's story written for a ${childAge}-year-old listener and clean it according to strict aural-readability rules.
-${languageInstruction}
-You do NOT add new prose, plot, characters, jokes, or descriptions. You ONLY rewrite sentences that violate the rules below. Sentences that already pass should be copied verbatim.
-
-CLEAN THESE FAILURES:
-
-1. EM-DASHES (—): Delete every em-dash. Replace with a sentence break (period + capital). If the em-dash wraps an appositive list, split the list into separate sentences. Em-dashes are forbidden in the output.
-
-2. SIMILES: Any sentence using "like a [X]", "like the [X]", or "like [X]" as a comparison. Rewrite literally — describe the thing directly with no comparison.
-   BAD: "It shone in all colors, like bubble soap in the sun."
-   GOOD: "It shone in all colors."
-   BAD: "The hallway light hummed above me, like a sleepy bee stuck behind glass."
-   GOOD: "The hallway light hummed above me. The hum was soft and low."
-
-3. SENTENCES OVER 12 WORDS: Count the words in every sentence. If over 12, split into two or more sentences using periods. Do not use semicolons or em-dashes to join clauses.
-
-4. EXISTENTIAL "THERE WAS / THERE WERE" INVERSIONS: Rewrite subject-first.
-   BAD: "There was a faint orange smell."
-   GOOD: "The air smelled like orange."
-   BAD: "There were three kids on the porch."
-   GOOD: "Three kids stood on the porch."
-
-5. STACKED PREPOSITIONAL PHRASES (3 or more in one sentence): Split.
-   BAD: "My sneaker made a dark mark by a skate-wheel scuff on the curb."
-   GOOD: "My sneaker made a dark mark on the curb. There was a skate-wheel scuff right next to it." (Actually rewrite without "There was": "A skate-wheel scuff sat right next to it.")
-
-6. INVERTED SYNTAX: Every sentence must start with a subject.
-   BAD: "In her fist is a key."
-   GOOD: "She held a key in her fist."
-
-7. BANNED WORDS: pennants, brass, landing (as a place), carved, woven, glinting, snapping, drifting, looming, towering, perched, nestled, faintly, softly, amidst, glimmer, ventured, majestic, faint (as in "faint smell"). Replace with plain alternatives a ${childAge}-year-old understands by ear.
-
-PRESERVE EXACTLY:
-- The title (# heading) — copy verbatim.
-- All scene breaks (---).
-- All **bold** emphasis on character names, magical objects, and key moments.
-- The ending "**The End** ✨".
-- All dialogue meaning. You may fix the framing of a dialogue sentence, but never change what a character says inside quotation marks.
-- The plot, characters, callbacks, and order of events.
-- The narrative voice (first or third person, present or past tense). If the draft is in past tense, keep it past tense. If present, keep it present.
-
-OUTPUT:
-- Output ONLY the cleaned markdown story.
-- No commentary, no preamble, no list of changes, no notes.
-- If a sentence already passes every rule, copy it verbatim.
-- Stop cleanly after "**The End** ✨".`;
-
-    const editorUserPrompt = `Clean the following draft story. Output only the cleaned markdown story.
-
-DRAFT:
-${draftStory}`;
-
-    const editorResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: EDITOR_MODEL,
-        messages: [
-          { role: "system", content: editorSystemPrompt },
-          { role: "user", content: editorUserPrompt },
-        ],
-        temperature: 0.3,
-        stream: true,
-      }),
-    });
-
-    if (!editorResponse.ok) {
-      if (editorResponse.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit reached. Please wait a moment and try again." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const t = await editorResponse.text();
-      console.error("Editor error:", editorResponse.status, t);
-      return new Response(
-        JSON.stringify({ error: "Story generation failed. Please try again." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    return new Response(editorResponse.body, {
+    return new Response(writerResponse.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
